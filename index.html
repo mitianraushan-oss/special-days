@@ -8,206 +8,101 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-tailwind.config = { theme: { extend: { fontFamily: { sans: ['Outfit','sans-serif'] } } } }
+tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','sans-serif']}}}}
 </script>
 <style>
-:root {
-  --bg: #151210; --bg2: #1e1a17; --card: #262220; --card-hover: #2e2a27;
-  --border: #3a3532; --text: #f5f0eb; --muted: #9a928a; --accent: #e8a030;
-  --accent2: #d4882a; --rose: #e8506a; --green: #34c770; --violet: #9b6dff;
-  --sms-blue: #2196F3;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-input, select, textarea {
-  background: var(--bg2); border: 1px solid var(--border); color: var(--text);
-  border-radius: 10px; padding: 10px 14px; font-family: inherit; font-size: 15px;
-  width: 100%; outline: none; transition: border-color 0.2s;
-}
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-select option { background: var(--bg2); color: var(--text); }
-textarea { resize: vertical; min-height: 80px; }
-
-.page { display: none; animation: pageIn 0.3s ease; }
-.page.active { display: block; }
-@keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-@keyframes confettiFall {
-  0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
-  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; }
-}
-
-.cat-birthday { background: rgba(232,160,48,0.15); color: var(--accent); }
-.cat-anniversary { background: rgba(232,80,106,0.15); color: var(--rose); }
-.cat-custom { background: rgba(155,109,255,0.15); color: var(--violet); }
-.cat-dot-birthday { background: var(--accent); }
-.cat-dot-anniversary { background: var(--rose); }
-.cat-dot-custom { background: var(--violet); }
-
-.event-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 16px; transition: all 0.2s; cursor: default;
-}
-.event-card:hover { background: var(--card-hover); transform: translateY(-1px); }
-
-.countdown-big { font-size: 28px; font-weight: 800; line-height: 1; }
-.countdown-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.countdown-today { color: var(--green); animation: pulse 2s ease infinite; }
-.countdown-soon { color: var(--accent); }
-.countdown-far { color: var(--muted); }
-
-.cal-day {
-  aspect-ratio: 1; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; border-radius: 10px; cursor: pointer; transition: all 0.15s;
-  font-size: 14px; font-weight: 500; position: relative; gap: 3px;
-}
-.cal-day:hover { background: var(--card); }
-.cal-day.today { background: var(--accent); color: #000; font-weight: 700; }
-.cal-day.today:hover { background: var(--accent2); }
-.cal-day.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
-.cal-dots { display: flex; gap: 3px; position: absolute; bottom: 4px; }
-.cal-dot { width: 5px; height: 5px; border-radius: 50%; }
-
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100;
-  display: none; align-items: flex-end; justify-content: center;
-  backdrop-filter: blur(4px); animation: fadeIn 0.2s ease;
-}
-.modal-overlay.open { display: flex; }
-.modal-box {
-  background: var(--bg2); border-radius: 20px 20px 0 0; width: 100%; max-width: 500px;
-  max-height: 90dvh; overflow-y: auto; padding: 24px; animation: slideUp 0.3s ease;
-}
-@media (min-width: 640px) {
-  .modal-overlay { align-items: center; }
-  .modal-box { border-radius: 20px; max-height: 85vh; }
-}
-
-.emoji-bar { display: flex; gap: 6px; flex-wrap: wrap; }
-.emoji-btn {
-  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-  font-size: 20px; background: var(--card); border: 1px solid var(--border);
-  border-radius: 8px; cursor: pointer; transition: all 0.15s;
-}
-.emoji-btn:hover { background: var(--card-hover); transform: scale(1.15); }
-.emoji-btn:active { transform: scale(0.95); }
-
-.toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px; }
-.toast {
-  padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 500;
-  display: flex; align-items: center; gap: 10px; animation: slideUp 0.3s ease;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-}
-.toast-success { background: #1a332a; border: 1px solid #2a5a42; color: var(--green); }
-.toast-error { background: #331a1e; border: 1px solid #5a2a32; color: var(--rose); }
-.toast-info { background: #1a2633; border: 1px solid #2a425a; color: #5ba8e8; }
-
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg2);
-  border-top: 1px solid var(--border); display: flex; align-items: center;
-  justify-content: space-around; padding: 6px 0 max(6px, env(safe-area-inset-bottom));
-  z-index: 50;
-}
-.nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 6px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s;
-  color: var(--muted); font-size: 10px; font-weight: 500; background: none; border: none;
-  font-family: inherit; -webkit-tap-highlight-color: transparent;
-}
-.nav-item:hover { color: var(--text); }
-.nav-item.active { color: var(--accent); }
-.nav-item i { font-size: 18px; }
-.nav-add {
-  width: 50px; height: 50px; border-radius: 16px; background: var(--accent);
-  color: #000; display: flex; align-items: center; justify-content: center;
-  font-size: 22px; cursor: pointer; border: none; transition: all 0.2s;
-  margin-top: -18px; box-shadow: 0 4px 20px rgba(232,160,48,0.35);
-  font-family: inherit; -webkit-tap-highlight-color: transparent;
-}
-.nav-add:hover { background: var(--accent2); transform: scale(1.05); }
-.nav-add:active { transform: scale(0.95); }
-
-.seg-control { display: flex; background: var(--bg); border-radius: 10px; padding: 3px; gap: 2px; }
-.seg-btn {
-  flex: 1; padding: 8px 12px; border-radius: 8px; border: none; background: none;
-  color: var(--muted); font-family: inherit; font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-}
-.seg-btn.active { background: var(--card); color: var(--text); }
-
-.btn {
-  padding: 10px 20px; border-radius: 10px; border: none; font-family: inherit;
-  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s;
-  display: inline-flex; align-items: center; gap: 8px; -webkit-tap-highlight-color: transparent;
-}
-.btn:active { transform: scale(0.97); }
-.btn-primary { background: var(--accent); color: #000; }
-.btn-primary:hover { background: var(--accent2); }
-.btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { background: var(--card-hover); }
-.btn-danger { background: rgba(232,80,106,0.15); color: var(--rose); }
-.btn-danger:hover { background: rgba(232,80,106,0.25); }
-.btn-whatsapp { background: #25D366; color: #fff; }
-.btn-whatsapp:hover { background: #1fa854; }
-.btn-sms { background: var(--sms-blue); color: #fff; }
-.btn-sms:hover { background: #1976D2; }
-.btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
-.btn-xs { padding: 6px 10px; font-size: 12px; border-radius: 7px; gap: 5px; }
-.btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 8px; }
-
-.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-.empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-.empty-state p { font-size: 15px; line-height: 1.6; }
-
-.sent-badge { font-size: 11px; color: var(--green); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
-
-.bg-glow {
-  position: fixed; top: -30%; left: -10%; width: 50%; height: 60%;
-  background: radial-gradient(ellipse, rgba(232,160,48,0.06) 0%, transparent 70%);
-  pointer-events: none; z-index: 0;
-}
-.bg-glow-2 {
-  position: fixed; bottom: -20%; right: -10%; width: 45%; height: 50%;
-  background: radial-gradient(ellipse, rgba(232,80,106,0.04) 0%, transparent 70%);
-  pointer-events: none; z-index: 0;
-}
-
-.char-counter { font-size: 11px; text-align: right; margin-top: 4px; }
-.char-ok { color: var(--muted); }
-.char-warn { color: var(--accent); }
-.char-over { color: var(--rose); }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
+:root{--bg:#151210;--bg2:#1e1a17;--card:#262220;--card-hover:#2e2a27;--border:#3a3532;--text:#f5f0eb;--muted:#9a928a;--accent:#e8a030;--accent2:#d4882a;--rose:#e8506a;--green:#34c770;--violet:#9b6dff;--sms-blue:#2196F3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+input,select,textarea{background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:15px;width:100%;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--bg2);color:var(--text)}
+textarea{resize:vertical;min-height:80px}
+.page{display:none;animation:pageIn .3s ease}.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+.cat-birthday{background:rgba(232,160,48,.15);color:var(--accent)}
+.cat-anniversary{background:rgba(232,80,106,.15);color:var(--rose)}
+.cat-custom{background:rgba(155,109,255,.15);color:var(--violet)}
+.cat-dot-birthday{background:var(--accent)}.cat-dot-anniversary{background:var(--rose)}.cat-dot-custom{background:var(--violet)}
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all .2s;cursor:default}
+.event-card:hover{background:var(--card-hover);transform:translateY(-1px)}
+.countdown-big{font-size:28px;font-weight:800;line-height:1}
+.countdown-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.countdown-today{color:var(--green);animation:pulse 2s ease infinite}
+.countdown-soon{color:var(--accent)}.countdown-far{color:var(--muted)}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;transition:all .15s;font-size:14px;font-weight:500;position:relative;gap:3px}
+.cal-day:hover{background:var(--card)}.cal-day.today{background:var(--accent);color:#000;font-weight:700}.cal-day.today:hover{background:var(--accent2)}
+.cal-day.selected{outline:2px solid var(--accent);outline-offset:-2px}
+.cal-dots{display:flex;gap:3px;position:absolute;bottom:4px}.cal-dot{width:5px;height:5px;border-radius:50%}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:500px;max-height:90dvh;overflow-y:auto;padding:24px;animation:slideUp .3s ease}
+@media(min-width:640px){.modal-overlay{align-items:center}.modal-box{border-radius:20px;max-height:85vh}}
+.emoji-bar{display:flex;gap:6px;flex-wrap:wrap}
+.emoji-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s}
+.emoji-btn:hover{background:var(--card-hover);transform:scale(1.15)}.emoji-btn:active{transform:scale(.95)}
+.toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;width:90%;max-width:400px}
+.toast{padding:12px 16px;border-radius:12px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;animation:slideUp .3s ease;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast-success{background:#1a332a;border:1px solid #2a5a42;color:var(--green)}
+.toast-error{background:#331a1e;border:1px solid #5a2a32;color:var(--rose)}
+.toast-info{background:#1a2633;border:1px solid #2a425a;color:#5ba8e8}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:50}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;border-radius:10px;cursor:pointer;transition:all .2s;color:var(--muted);font-size:10px;font-weight:500;background:none;border:none;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.nav-item:hover{color:var(--text)}.nav-item.active{color:var(--accent)}.nav-item i{font-size:18px}
+.nav-add{width:50px;height:50px;border-radius:16px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:none;transition:all .2s;margin-top:-18px;box-shadow:0 4px 20px rgba(232,160,48,.35);font-family:inherit;-webkit-tap-highlight-color:transparent}
+.nav-add:hover{background:var(--accent2);transform:scale(1.05)}.nav-add:active{transform:scale(.95)}
+.seg-control{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px}
+.seg-btn{flex:1;padding:8px 12px;border-radius:8px;border:none;background:none;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.seg-btn.active{background:var(--card);color:var(--text)}
+.btn{padding:10px 20px;border-radius:10px;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--card-hover)}
+.btn-danger{background:rgba(232,80,106,.15);color:var(--rose)}.btn-danger:hover{background:rgba(232,80,106,.25)}
+.btn-whatsapp{background:#25D366;color:#fff}.btn-whatsapp:hover{background:#1fa854}
+.btn-sms{background:var(--sms-blue);color:#fff}.btn-sms:hover{background:#1976D2}
+.btn-sm{padding:7px 14px;font-size:13px;border-radius:8px}
+.btn-xs{padding:6px 10px;font-size:12px;border-radius:7px;gap:5px}
+.btn-icon{width:36px;height:36px;padding:0;justify-content:center;border-radius:8px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}.empty-state i{font-size:48px;margin-bottom:16px;opacity:.3}.empty-state p{font-size:15px;line-height:1.6}
+.sent-badge{font-size:11px;color:var(--green);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.remind-badge{font-size:11px;color:var(--violet);font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.bg-glow{position:fixed;top:-30%;left:-10%;width:50%;height:60%;background:radial-gradient(ellipse,rgba(232,160,48,.06) 0%,transparent 70%);pointer-events:none;z-index:0}
+.bg-glow-2{position:fixed;bottom:-20%;right:-10%;width:45%;height:50%;background:radial-gradient(ellipse,rgba(232,80,106,.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+.char-counter{font-size:11px;text-align:right;margin-top:4px}.char-ok{color:var(--muted)}.char-warn{color:var(--accent)}.char-over{color:var(--rose)}
+.info-box{background:rgba(155,109,255,.08);border:1px solid rgba(155,109,255,.15);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;color:var(--violet);display:flex;gap:8px;align-items:flex-start}
+.info-box i{margin-top:2px;flex-shrink:0}
+.tpl-chip{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;color:var(--text);font-size:13px;line-height:1.4;-webkit-tap-highlight-color:transparent;width:100%}
+.tpl-chip:hover{border-color:var(--accent);background:var(--card)}
+.tpl-chip.selected{border-color:var(--accent);background:rgba(232,160,48,.1)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-
 <div class="bg-glow"></div>
 <div class="bg-glow-2"></div>
 
 <div id="app" class="relative z-10 max-w-lg mx-auto min-h-screen pb-24">
-  <header class="sticky top-0 z-40 px-5 pt-4 pb-3 flex items-center justify-between" style="background:linear-gradient(var(--bg) 60%, transparent);">
+  <header class="sticky top-0 z-40 px-5 pt-4 pb-3 flex items-center justify-between" style="background:linear-gradient(var(--bg) 60%,transparent)">
     <div>
       <h1 class="text-xl font-bold tracking-tight">Special Days</h1>
-      <p class="text-xs mt-0.5" style="color:var(--muted);" id="header-subtitle">Never miss a moment</p>
+      <p class="text-xs mt-0.5" style="color:var(--muted)" id="header-subtitle">Never miss a moment</p>
     </div>
     <button class="btn-icon btn-secondary relative" onclick="requestNotifPermission()" aria-label="Notifications" id="bell-btn">
       <i class="fa-solid fa-bell text-sm"></i>
-      <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center hidden" style="background:var(--rose);color:#fff;"></span>
+      <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center hidden" style="background:var(--rose);color:#fff"></span>
     </button>
   </header>
 
-  <div id="page-upcoming" class="page active px-5">
-    <div id="upcoming-list"></div>
-  </div>
+  <!-- PAGE: UPCOMING -->
+  <div id="page-upcoming" class="page active px-5"><div id="upcoming-list"></div></div>
 
+  <!-- PAGE: CALENDAR -->
   <div id="page-calendar" class="page px-5">
     <div class="flex items-center justify-between mb-4">
       <button class="btn-icon btn-secondary" onclick="calNav(-1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
@@ -218,10 +113,11 @@ textarea { resize: vertical; min-height: 80px; }
     <div id="cal-events" class="mt-4"></div>
   </div>
 
+  <!-- PAGE: ALL DATES -->
   <div id="page-all" class="page px-5">
     <div class="relative mb-3">
-      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm" style="color:var(--muted);"></i>
-      <input type="text" id="search-input" placeholder="Search events or contacts..." style="padding-left:36px;" oninput="renderAll()">
+      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm" style="color:var(--muted)"></i>
+      <input type="text" id="search-input" placeholder="Search events or contacts..." style="padding-left:36px" oninput="renderAll()">
     </div>
     <div class="seg-control mb-4" id="filter-cats">
       <button class="seg-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
@@ -232,62 +128,36 @@ textarea { resize: vertical; min-height: 80px; }
     <div id="all-list"></div>
   </div>
 
+  <!-- PAGE: SETTINGS -->
   <div id="page-settings" class="page px-5">
     <h2 class="text-lg font-bold mb-4">Settings</h2>
     <div class="flex flex-col gap-3">
       <div class="event-card flex items-center justify-between">
-        <div><p class="font-semibold text-sm">Browser Notifications</p><p class="text-xs mt-0.5" style="color:var(--muted);">Get alerted for upcoming dates</p></div>
-        <label class="relative inline-block w-11 h-6 cursor-pointer">
-          <input type="checkbox" id="toggle-notif" class="sr-only peer" onchange="toggleNotif(this.checked)">
-          <span class="absolute inset-0 rounded-full transition-colors peer-checked:bg-[var(--accent)]" style="background:var(--border);"></span>
-          <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span>
-        </label>
+        <div><p class="font-semibold text-sm">Browser Notifications</p><p class="text-xs mt-0.5" style="color:var(--muted)">Get alerted for upcoming dates</p></div>
+        <label class="relative inline-block w-11 h-6 cursor-pointer"><input type="checkbox" id="toggle-notif" class="sr-only peer" onchange="toggleNotif(this.checked)"><span class="absolute inset-0 rounded-full transition-colors peer-checked:bg-[var(--accent)]" style="background:var(--border)"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></label>
       </div>
       <div class="event-card flex items-center justify-between">
-        <div><p class="font-semibold text-sm">Reminder Sound</p><p class="text-xs mt-0.5" style="color:var(--muted);">Play a chime when reminded</p></div>
-        <label class="relative inline-block w-11 h-6 cursor-pointer">
-          <input type="checkbox" id="toggle-sound" class="sr-only peer" onchange="toggleSound(this.checked)" checked>
-          <span class="absolute inset-0 rounded-full transition-colors peer-checked:bg-[var(--accent)]" style="background:var(--border);"></span>
-          <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span>
-        </label>
+        <div><p class="font-semibold text-sm">Reminder Sound</p><p class="text-xs mt-0.5" style="color:var(--muted)">Play a chime when reminded</p></div>
+        <label class="relative inline-block w-11 h-6 cursor-pointer"><input type="checkbox" id="toggle-sound" class="sr-only peer" onchange="toggleSound(this.checked)" checked><span class="absolute inset-0 rounded-full transition-colors peer-checked:bg-[var(--accent)]" style="background:var(--border)"></span><span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></label>
       </div>
-      <button class="event-card text-left w-full" onclick="exportData()">
-        <p class="font-semibold text-sm"><i class="fa-solid fa-download mr-2" style="color:var(--accent);"></i>Export Data</p>
-        <p class="text-xs mt-0.5" style="color:var(--muted);">Download all events as JSON backup</p>
-      </button>
-      <label class="event-card text-left w-full cursor-pointer block">
-        <p class="font-semibold text-sm"><i class="fa-solid fa-upload mr-2" style="color:var(--accent);"></i>Import Data</p>
-        <p class="text-xs mt-0.5" style="color:var(--muted);">Restore from a JSON backup file</p>
-        <input type="file" accept=".json" class="hidden" onchange="importData(this.files[0]);this.value=''">
-      </label>
-      <button class="event-card text-left w-full btn-danger" onclick="confirmClearAll()" style="border:1px solid rgba(232,80,106,0.2);">
-        <p class="font-semibold text-sm"><i class="fa-solid fa-trash mr-2"></i>Clear All Data</p>
-        <p class="text-xs mt-0.5" style="color:var(--muted);">Permanently delete all saved events</p>
-      </button>
-      <div class="event-card" style="border-color:transparent;background:transparent;">
-        <p class="text-xs" style="color:var(--muted);">WhatsApp and SMS buttons open the respective app with a pre-filled message. You tap Send — we never access your accounts.</p>
-      </div>
+      <button class="event-card text-left w-full" onclick="exportData()"><p class="font-semibold text-sm"><i class="fa-solid fa-download mr-2" style="color:var(--accent)"></i>Export Data</p><p class="text-xs mt-0.5" style="color:var(--muted)">Download all events as JSON backup</p></button>
+      <label class="event-card text-left w-full cursor-pointer block"><p class="font-semibold text-sm"><i class="fa-solid fa-upload mr-2" style="color:var(--accent)"></i>Import Data</p><p class="text-xs mt-0.5" style="color:var(--muted)">Restore from a JSON backup file</p><input type="file" accept=".json" class="hidden" onchange="importData(this.files[0]);this.value=''"></label>
+      <button class="event-card text-left w-full btn-danger" onclick="confirmClearAll()" style="border:1px solid rgba(232,80,106,.2)"><p class="font-semibold text-sm"><i class="fa-solid fa-trash mr-2"></i>Clear All Data</p><p class="text-xs mt-0.5" style="color:var(--muted)">Permanently delete all saved events</p></button>
+      <div class="event-card" style="border-color:transparent;background:transparent"><p class="text-xs" style="color:var(--muted)">WhatsApp and SMS buttons open the respective app with a pre-filled message. You tap Send — we never access your accounts.</p></div>
     </div>
   </div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav max-w-lg mx-auto">
-  <button class="nav-item active" data-page="upcoming" onclick="navigate('upcoming',this)">
-    <i class="fa-solid fa-clock"></i><span>Upcoming</span>
-  </button>
-  <button class="nav-item" data-page="calendar" onclick="navigate('calendar',this)">
-    <i class="fa-regular fa-calendar"></i><span>Calendar</span>
-  </button>
+  <button class="nav-item active" data-page="upcoming" onclick="navigate('upcoming',this)"><i class="fa-solid fa-clock"></i><span>Upcoming</span></button>
+  <button class="nav-item" data-page="calendar" onclick="navigate('calendar',this)"><i class="fa-regular fa-calendar"></i><span>Calendar</span></button>
   <button class="nav-add" onclick="openAddModal()" aria-label="Add event"><i class="fa-solid fa-plus"></i></button>
-  <button class="nav-item" data-page="all" onclick="navigate('all',this)">
-    <i class="fa-solid fa-list"></i><span>All Dates</span>
-  </button>
-  <button class="nav-item" data-page="settings" onclick="navigate('settings',this)">
-    <i class="fa-solid fa-gear"></i><span>Settings</span>
-  </button>
+  <button class="nav-item" data-page="all" onclick="navigate('all',this)"><i class="fa-solid fa-list"></i><span>All Dates</span></button>
+  <button class="nav-item" data-page="settings" onclick="navigate('settings',this)"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
 </nav>
 
-<!-- Modal: Add/Edit Event -->
+<!-- MODAL: ADD / EDIT EVENT -->
 <div class="modal-overlay" id="modal-add">
   <div class="modal-box">
     <div class="flex items-center justify-between mb-5">
@@ -296,16 +166,10 @@ textarea { resize: vertical; min-height: 80px; }
     </div>
     <form id="event-form" onsubmit="handleFormSubmit(event)" class="flex flex-col gap-4">
       <input type="hidden" id="f-id">
+      <div><label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">EVENT NAME</label><input type="text" id="f-name" placeholder="e.g. Mom's Birthday" required></div>
+      <div><label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">DATE</label><input type="date" id="f-date" required></div>
       <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">EVENT NAME</label>
-        <input type="text" id="f-name" placeholder="e.g. Mom's Birthday" required>
-      </div>
-      <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">DATE</label>
-        <input type="date" id="f-date" required>
-      </div>
-      <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">CATEGORY</label>
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">CATEGORY</label>
         <div class="seg-control" id="f-cat-seg">
           <button type="button" class="seg-btn active" data-val="birthday" onclick="setCat('birthday',this)">Birthday</button>
           <button type="button" class="seg-btn" data-val="anniversary" onclick="setCat('anniversary',this)">Anniversary</button>
@@ -313,32 +177,20 @@ textarea { resize: vertical; min-height: 80px; }
         </div>
         <input type="hidden" id="f-category" value="birthday">
       </div>
+      <div><label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">CONTACT NAME <span style="color:var(--border)">(optional)</span></label><input type="text" id="f-contact" placeholder="e.g. Mom"></div>
+      <div><label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">PHONE NUMBER <span style="color:var(--border)">(with country code, e.g. +91...)</span></label><input type="tel" id="f-phone" placeholder="e.g. +919876543210" inputmode="tel"></div>
       <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">CONTACT NAME <span style="color:var(--border);">(optional)</span></label>
-        <input type="text" id="f-contact" placeholder="e.g. Mom">
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">PICK A MESSAGE <span style="color:var(--border)">(tap to use, or write your own below)</span></label>
+        <div class="flex flex-col gap-2" id="tpl-chips"></div>
       </div>
       <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">PHONE NUMBER <span style="color:var(--border);">(with country code, e.g. +91...)</span></label>
-        <input type="tel" id="f-phone" placeholder="e.g. +919876543210" inputmode="tel">
-      </div>
-      <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">MESSAGE TEMPLATE</label>
-        <select id="f-template" onchange="applyTemplate()">
-          <option value="birthday">Birthday Wish</option>
-          <option value="anniversary">Anniversary Wish</option>
-          <option value="congrats">Congratulations</option>
-          <option value="thankyou">Thank You</option>
-          <option value="custom">Custom Message</option>
-        </select>
-      </div>
-      <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">MESSAGE <span style="color:var(--border);">(tap emojis to add)</span></label>
-        <textarea id="f-message" rows="3" placeholder="Your wish message..." oninput="updateFormCharCount()"></textarea>
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">YOUR MESSAGE <span style="color:var(--border)">(tap emojis to add)</span></label>
+        <textarea id="f-message" rows="3" placeholder="Your wish message..." oninput="onMessageEdit()"></textarea>
         <div class="char-counter char-ok" id="form-char-counter">0 / 160</div>
         <div class="emoji-bar mt-2" id="emoji-bar"></div>
       </div>
       <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">REMIND ME</label>
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted)">REMIND ME</label>
         <div class="seg-control" id="f-remind-seg">
           <button type="button" class="seg-btn" data-val="7" onclick="setRemind(7,this)">1 week</button>
           <button type="button" class="seg-btn active" data-val="3" onclick="setRemind(3,this)">3 days</button>
@@ -346,17 +198,16 @@ textarea { resize: vertical; min-height: 80px; }
           <button type="button" class="seg-btn" data-val="0" onclick="setRemind(0,this)">On day</button>
         </div>
         <input type="hidden" id="f-remind" value="3">
+        <div class="info-box mt-2"><i class="fa-solid fa-circle-info"></i><span>A reminder will pop up on this page when the date is near. <strong>Keep this tab open</strong> in your browser for reminders to work. Enable browser notifications (bell icon top-right) for alerts even when this tab is in the background.</span></div>
       </div>
-      <button type="submit" class="btn btn-primary w-full justify-center mt-2" style="padding:13px;">
-        <i class="fa-solid fa-check"></i> <span id="form-submit-text">Save Event</span>
-      </button>
+      <button type="submit" class="btn btn-primary w-full justify-center mt-2" style="padding:13px"><i class="fa-solid fa-check"></i> <span id="form-submit-text">Save Event</span></button>
     </form>
   </div>
 </div>
 
-<!-- Modal: Confirm -->
+<!-- MODAL: CONFIRM -->
 <div class="modal-overlay" id="modal-confirm">
-  <div class="modal-box" style="max-width:360px;">
+  <div class="modal-box" style="max-width:360px">
     <p class="text-sm mb-5" id="confirm-text"></p>
     <div class="flex gap-3">
       <button class="btn btn-secondary flex-1 justify-center" onclick="closeModal('modal-confirm')">Cancel</button>
@@ -368,159 +219,218 @@ textarea { resize: vertical; min-height: 80px; }
 <div class="toast-container" id="toasts"></div>
 
 <script>
-const STORAGE_KEY = 'specialdays_events';
-const SETTINGS_KEY = 'specialdays_settings';
-const SMS_LIMIT = 160;
+/* ===== CONSTANTS ===== */
+var STORAGE_KEY = 'specialdays_events';
+var SETTINGS_KEY = 'specialdays_settings';
+var SMS_LIMIT = 160;
 
-const CATEGORIES = {
-  birthday: { label: 'Birthday', icon: 'fa-cake-candles', color: 'var(--accent)' },
-  anniversary: { label: 'Anniversary', icon: 'fa-heart', color: 'var(--rose)' },
-  custom: { label: 'Other', icon: 'fa-star', color: 'var(--violet)' }
+var CATEGORIES = {
+  birthday: { label: 'Birthday', icon: 'fa-cake-candles' },
+  anniversary: { label: 'Anniversary', icon: 'fa-heart' },
+  custom: { label: 'Other', icon: 'fa-star' }
 };
 
-const TEMPLATES = {
-  birthday: '{name}, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things!',
-  anniversary: '{name}, Happy Anniversary! Cheers to another beautiful year of wonderful memories together!',
-  congrats: '{name}, Congratulations! So proud of you! Here\'s to many more amazing achievements!',
-  thankyou: '{name}, Thank you so much! Your kindness means the world to me!',
-  custom: ''
+/* 3 templates per category */
+var TEMPLATES = {
+  birthday: [
+    '{name}, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things!',
+    'Happy Birthday {name}! Another year older, another year wiser. May this year bring you endless joy and success!',
+    '{name}, it\'s your special day! Hope it\'s as amazing as you are. Happy Birthday!'
+  ],
+  anniversary: [
+    '{name}, Happy Anniversary! Cheers to another beautiful year of wonderful memories together!',
+    'Happy Anniversary {name}! Every moment with you is a treasure. Here\'s to forever!',
+    '{name}, celebrating another year of love and togetherness. Happy Anniversary!'
+  ],
+  custom: [
+    '{name}, Congratulations! So proud of you! Here\'s to many more amazing achievements!',
+    '{name}, Thank you so much! Your kindness means the world to me!',
+    '{name}, thinking of you today! Just wanted to send some love your way.'
+  ]
 };
 
-const EMOJI_SETS = {
-  birthday: ['🎂','🎉','🎈','🥳','🎁','🎊','🍰','🎵','��','❤️','🥂','💐'],
-  anniversary: ['💕','🌹','🥂','❤️','💍','💐','🕯️','✨','🥰','💫','🍷','🫶'],
-  congrats: ['🎊','👏','🌟','🎯','🏆','💪','🎉','✨','🥳','🔥','💐','👏'],
-  thankyou: ['🙏','💖','🌸','😊','🤗','💝','🌟','❤️','💐','🫶','✨','🌺'],
-  custom: ['❤️','🌟','✨','💫','🎶','🦋','🌈','🍀','🌸','💫','💖','🔥']
+var EMOJI_SETS = {
+  birthday: ['\u{1F382}','\u{1F389}','\u{1F388}','\u{1F973}','\u{1F381}','\u{1F38A}','\u{1F370}','\u{1F3B5}','\u{1F31F}','\u{2764}\uFE0F','\u{1F942}','\u{1F490}'],
+  anniversary: ['\u{1F495}','\u{1F339}','\u{1F942}','\u{2764}\uFE0F','\u{1F48D}','\u{1F490}','\u{1F56F}\uFE0F','\u2728','\u{1F970}','\u{1F4AB}','\u{1F377}','\u{1FAC6}'],
+  custom: ['\u{1F31F}','\u{1F38A}','\u{1F44F}','\u{1F3AF}','\u{1F3C6}','\u{1F4AA}','\u{1F389}','\u2728','\u{1F973}','\u{1F525}','\u{1F490}','\u{1F64F}']
 };
 
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS_SHORT = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS_SHORT = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+var REMIND_LABELS = { 7: '1 week before', 3: '3 days before', 1: '1 day before', 0: 'On the day' };
 
-let currentPage = 'upcoming';
-let currentFilter = 'all';
-let calYear, calMonth, calSelectedDate = null;
-let settings = { notifEnabled: false, soundEnabled: true };
+/* ===== APP STATE ===== */
+var currentPage = 'upcoming';
+var currentFilter = 'all';
+var calYear, calMonth, calSelectedDate = null;
+var settings = { notifEnabled: false, soundEnabled: true };
+var selectedTplIdx = 0;
+var userEditedMessage = false; /* track if user manually typed */
 
-/* ==================== Data Layer ==================== */
+/* ===== DATA LAYER ===== */
 function getEvents() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
+  catch(e) { return []; }
 }
-function saveEvents(events) { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); }
+function saveEvents(events) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+}
 function saveEvent(ev, silent) {
-  const events = getEvents();
-  const idx = events.findIndex(e => e.id === ev.id);
+  var events = getEvents();
+  var idx = -1;
+  for (var i = 0; i < events.length; i++) { if (events[i].id === ev.id) { idx = i; break; } }
   if (idx >= 0) events[idx] = ev; else events.push(ev);
   saveEvents(events);
   if (!silent) { renderCurrentPage(); showToast('Event saved', 'success'); }
 }
 function deleteEvent(id) {
-  saveEvents(getEvents().filter(e => e.id !== id));
+  saveEvents(getEvents().filter(function(e) { return e.id !== id; }));
   renderCurrentPage();
   showToast('Event deleted', 'info');
 }
 function loadSettings() {
-  try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch {}
+  try { var s = JSON.parse(localStorage.getItem(SETTINGS_KEY)); if (s) { settings.notifEnabled = s.notifEnabled || false; settings.soundEnabled = s.soundEnabled !== false; } } catch(e) {}
   document.getElementById('toggle-notif').checked = settings.notifEnabled;
   document.getElementById('toggle-sound').checked = settings.soundEnabled;
 }
-function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
 
-/* ==================== Date Utilities ==================== */
+/* ===== DATE UTILITIES ===== */
 function isLeapYear(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
 function getNextOccurrence(dateStr) {
-  const orig = new Date(dateStr + 'T00:00:00');
-  const m = orig.getMonth(), d = orig.getDate();
-  const now = new Date(); now.setHours(0,0,0,0);
-  let next = new Date(now.getFullYear(), m, d);
+  var orig = new Date(dateStr + 'T00:00:00');
+  var m = orig.getMonth(), d = orig.getDate();
+  var now = new Date(); now.setHours(0,0,0,0);
+  var next = new Date(now.getFullYear(), m, d);
   if (next < now) next = new Date(now.getFullYear() + 1, m, d);
   if (m === 1 && d === 29 && !isLeapYear(next.getFullYear())) next = new Date(next.getFullYear(), 1, 28);
   return next;
 }
 function getDaysUntil(ev) {
-  const next = getNextOccurrence(ev.date);
-  const now = new Date(); now.setHours(0,0,0,0);
+  var next = getNextOccurrence(ev.date);
+  var now = new Date(); now.setHours(0,0,0,0);
   return Math.ceil((next - now) / 86400000);
 }
 function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+  var d = new Date(dateStr + 'T00:00:00');
+  return MONTHS[d.getMonth()] + ' ' + d.getDate();
 }
 function formatCountdown(days) {
   if (days === 0) return { text: 'TODAY', cls: 'countdown-today' };
   if (days === 1) return { text: 'Tomorrow', cls: 'countdown-soon' };
-  if (days <= 7) return { text: `${days} days`, cls: 'countdown-soon' };
-  if (days <= 30) return { text: `${days} days`, cls: 'countdown-far' };
-  const m = Math.floor(days / 30), d = days % 30;
-  return { text: d ? `${m}m ${d}d` : `${m} months`, cls: 'countdown-far' };
+  if (days <= 7) return { text: days + ' days', cls: 'countdown-soon' };
+  if (days <= 30) return { text: days + ' days', cls: 'countdown-far' };
+  var m = Math.floor(days / 30), d = days % 30;
+  return { text: d ? m + 'm ' + d + 'd' : m + ' months', cls: 'countdown-far' };
 }
 function todayStr() {
-  const n = new Date();
-  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+  var n = new Date();
+  return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0');
 }
 function getEventsForDate(dateStr) {
-  return getEvents().filter(ev => {
-    const next = getNextOccurrence(ev.date);
-    const ds = `${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}-${String(next.getDate()).padStart(2,'0')}`;
+  return getEvents().filter(function(ev) {
+    var next = getNextOccurrence(ev.date);
+    var ds = next.getFullYear() + '-' + String(next.getMonth()+1).padStart(2,'0') + '-' + String(next.getDate()).padStart(2,'0');
     return ds === dateStr;
   });
 }
 function getSortedEvents() {
-  return getEvents().map(ev => ({ ...ev, daysUntil: getDaysUntil(ev) })).sort((a, b) => a.daysUntil - b.daysUntil);
+  return getEvents().map(function(ev) { return Object.assign({}, ev, { daysUntil: getDaysUntil(ev) }); }).sort(function(a, b) { return a.daysUntil - b.daysUntil; });
 }
 
-/* ==================== Character Counter ==================== */
-function getCharClass(len) {
-  if (len <= SMS_LIMIT) return 'char-ok';
-  if (len <= SMS_LIMIT + 20) return 'char-warn';
-  return 'char-over';
-}
-function updateFormCharCount() {
-  const len = document.getElementById('f-message').value.length;
-  const el = document.getElementById('form-char-counter');
-  el.textContent = `${len} / ${SMS_LIMIT}`;
-  el.className = `char-counter ${getCharClass(len)}`;
+/* ===== CHARACTER COUNTER ===== */
+function updateCharCounter() {
+  var len = document.getElementById('f-message').value.length;
+  var el = document.getElementById('form-char-counter');
+  var cls = len <= SMS_LIMIT ? 'char-ok' : len <= SMS_LIMIT + 20 ? 'char-warn' : 'char-over';
+  el.textContent = len + ' / ' + SMS_LIMIT;
+  el.className = 'char-counter ' + cls;
 }
 
-/* ==================== Reminder System ==================== */
+/* called when user manually types in message box */
+function onMessageEdit() {
+  userEditedMessage = true;
+  updateCharCounter();
+  document.querySelectorAll('.tpl-chip').forEach(function(c) { c.classList.remove('selected'); });
+}
+
+/* ===== TEMPLATE CHIPS ===== */
+function getNameForTemplate() {
+  return document.getElementById('f-contact').value || document.getElementById('f-name').value || 'there';
+}
+
+function renderTemplateChips(category, highlightIdx) {
+  var container = document.getElementById('tpl-chips');
+  var templates = TEMPLATES[category] || TEMPLATES.custom;
+  var name = getNameForTemplate();
+  var html = '';
+  for (var i = 0; i < templates.length; i++) {
+    var preview = templates[i].replace('{name}', name);
+    if (preview.length > 65) preview = preview.substring(0, 65) + '...';
+    var sel = (i === highlightIdx) ? ' selected' : '';
+    html += '<button type="button" class="tpl-chip' + sel + '" onclick="pickTemplate(' + i + ',this)">';
+    html += '<span style="color:var(--muted);font-size:11px">Option ' + (i+1) + '</span><br>';
+    html += escHtml(preview);
+    html += '</button>';
+  }
+  container.innerHTML = html;
+}
+
+function pickTemplate(idx, el) {
+  selectedTplIdx = idx;
+  userEditedMessage = false;
+  var category = document.getElementById('f-category').value;
+  var tpl = (TEMPLATES[category] || TEMPLATES.custom)[idx];
+  document.getElementById('f-message').value = tpl.replace('{name}', getNameForTemplate());
+  updateCharCounter();
+  document.querySelectorAll('.tpl-chip').forEach(function(c) { c.classList.remove('selected'); });
+  if (el) el.classList.add('selected');
+}
+
+/* ===== REMINDER SYSTEM ===== */
 function checkReminders() {
-  const events = getEvents();
-  let notified = 0;
-  events.forEach(ev => {
-    const days = getDaysUntil(ev);
+  var events = getEvents();
+  var notified = 0;
+  for (var i = 0; i < events.length; i++) {
+    var ev = events[i];
+    var days = getDaysUntil(ev);
     if (days <= ev.remindBefore && days >= 0) {
-      const nextYear = getNextOccurrence(ev.date).getFullYear();
-      if (ev.remindSentYear === nextYear) return;
+      var nextYear = getNextOccurrence(ev.date).getFullYear();
+      if (ev.remindSentYear === nextYear) continue;
       ev.remindSentYear = nextYear;
-      const allEv = getEvents();
-      const idx = allEv.findIndex(e => e.id === ev.id);
-      if (idx >= 0) { allEv[idx] = ev; saveEvents(allEv); }
-      const cd = formatCountdown(days);
-      const msg = days === 0 ? `${ev.name} is TODAY!` : `${ev.name} is in ${cd.text}`;
+      var allEv = getEvents();
+      for (var j = 0; j < allEv.length; j++) { if (allEv[j].id === ev.id) { allEv[j] = ev; break; } }
+      saveEvents(allEv);
+      var cd = formatCountdown(days);
+      var msg = days === 0 ? ev.name + ' is TODAY!' : ev.name + ' is in ' + cd.text;
       if (settings.notifEnabled && 'Notification' in window && Notification.permission === 'granted') {
-        new Notification('Special Days Reminder', { body: msg, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎉</text></svg>' });
+        new Notification('Special Days Reminder', { body: msg });
       }
       if (settings.soundEnabled) playChime();
       showToast(msg, days === 0 ? 'error' : 'info');
       notified++;
     }
-  });
-  events.forEach(ev => {
-    const next = getNextOccurrence(ev.date);
-    if (ev.remindSentYear && ev.remindSentYear < next.getFullYear()) {
-      ev.remindSentYear = null;
-      const allEv = getEvents();
-      const idx = allEv.findIndex(e => e.id === ev.id);
-      if (idx >= 0) { allEv[idx] = ev; saveEvents(allEv); }
+  }
+  /* reset for next year */
+  for (var k = 0; k < events.length; k++) {
+    var ev2 = events[k];
+    var next2 = getNextOccurrence(ev2.date);
+    if (ev2.remindSentYear && ev2.remindSentYear < next2.getFullYear()) {
+      ev2.remindSentYear = null;
+      var allEv2 = getEvents();
+      for (var l = 0; l < allEv2.length; l++) { if (allEv2[l].id === ev2.id) { allEv2[l] = ev2; break; } }
+      saveEvents(allEv2);
     }
-  });
+  }
   if (notified > 0) updateHeaderSubtitle();
 }
+
 function requestNotifPermission() {
   if (!('Notification' in window)) { showToast('Notifications not supported in this browser', 'error'); return; }
   if (Notification.permission === 'granted') { showToast('Notifications already enabled', 'info'); return; }
-  Notification.requestPermission().then(p => {
+  Notification.requestPermission().then(function(p) {
     if (p === 'granted') {
       settings.notifEnabled = true; saveSettings();
       document.getElementById('toggle-notif').checked = true;
@@ -528,197 +438,194 @@ function requestNotifPermission() {
     } else { showToast('Notification permission denied', 'error'); }
   });
 }
+
 function toggleNotif(val) {
   if (val && 'Notification' in window && Notification.permission !== 'granted') {
-    Notification.requestPermission().then(p => {
-      if (p !== 'granted') {
-        document.getElementById('toggle-notif').checked = false;
-        settings.notifEnabled = false;
-        showToast('Permission denied', 'error'); return;
-      }
-      settings.notifEnabled = true; saveSettings();
-      showToast('Notifications enabled', 'success');
+    Notification.requestPermission().then(function(p) {
+      if (p !== 'granted') { document.getElementById('toggle-notif').checked = false; settings.notifEnabled = false; showToast('Permission denied', 'error'); return; }
+      settings.notifEnabled = true; saveSettings(); showToast('Notifications enabled', 'success');
     });
   } else { settings.notifEnabled = val; saveSettings(); }
 }
 function toggleSound(val) { settings.soundEnabled = val; saveSettings(); }
 
-/* ==================== Sound & Effects ==================== */
+/* ===== SOUND & EFFECTS ===== */
 function playChime() {
   try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    [660, 880, 1100].forEach((freq, i) => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sine'; osc.frequency.value = freq;
-      osc.connect(gain); gain.connect(ac.destination);
-      gain.gain.setValueAtTime(0.12, ac.currentTime + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + i * 0.1 + 0.35);
-      osc.start(ac.currentTime + i * 0.1);
-      osc.stop(ac.currentTime + i * 0.1 + 0.35);
-    });
+    var ac = new (window.AudioContext || window.webkitAudioContext)();
+    var freqs = [660, 880, 1100];
+    for (var i = 0; i < freqs.length; i++) {
+      (function(freq, idx) {
+        var osc = ac.createOscillator();
+        var gain = ac.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq;
+        osc.connect(gain); gain.connect(ac.destination);
+        gain.gain.setValueAtTime(0.12, ac.currentTime + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + idx * 0.1 + 0.35);
+        osc.start(ac.currentTime + idx * 0.1);
+        osc.stop(ac.currentTime + idx * 0.1 + 0.35);
+      })(freqs[i], i);
+    }
   } catch(e) {}
 }
+
 function burstConfetti(x, y) {
-  const colors = ['#e8a030','#e8506a','#34c770','#5ba8e8','#9b6dff','#ec4899','#fbbf24'];
-  for (let i = 0; i < 35; i++) {
-    const el = document.createElement('div');
-    const size = 4 + Math.random() * 6;
-    el.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;
-      background:${colors[i%colors.length]};border-radius:${Math.random()>0.5?'50%':'2px'};
-      pointer-events:none;z-index:9999;
-      --dx:${(Math.random()-0.5)*350}px;--dy:${-Math.random()*400-80}px;--r:${Math.random()*720-360}deg;
-      animation:confettiFall ${0.6+Math.random()*0.4}s ease-out forwards;`;
+  var colors = ['#e8a030','#e8506a','#34c770','#5ba8e8','#9b6dff','#ec4899','#fbbf24'];
+  for (var i = 0; i < 35; i++) {
+    var el = document.createElement('div');
+    var size = 4 + Math.random() * 6;
+    el.style.cssText = 'position:fixed;left:' + x + 'px;top:' + y + 'px;width:' + size + 'px;height:' + size + 'px;background:' + colors[i%colors.length] + ';border-radius:' + (Math.random()>0.5?'50%':'2px') + ';pointer-events:none;z-index:9999;--dx:' + ((Math.random()-0.5)*350) + 'px;--dy:' + (-Math.random()*400-80) + 'px;--r:' + (Math.random()*720-360) + 'deg;animation:confettiFall ' + (0.6+Math.random()*0.4) + 's ease-out forwards;';
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1100);
+    (function(elem) { setTimeout(function() { elem.remove(); }, 1100); })(el);
   }
 }
 
-/* ==================== Toast System ==================== */
-function showToast(msg, type = 'info') {
-  const container = document.getElementById('toasts');
-  const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`;
+/* ===== TOAST ===== */
+function showToast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toasts');
+  var icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.innerHTML = '<i class="fa-solid ' + icons[type] + '"></i><span>' + msg + '</span>';
   container.appendChild(toast);
-  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+  setTimeout(function() {
+    toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; toast.style.transition = 'all 0.3s';
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 3000);
 }
 
-/* ==================== Rendering: Upcoming ==================== */
-function renderUpcoming() {
-  const list = document.getElementById('upcoming-list');
-  const sorted = getSortedEvents().filter(e => e.daysUntil <= 90);
-  const next30 = sorted.filter(e => e.daysUntil <= 30);
-  if (sorted.length === 0) {
-    list.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar-plus block"></i><p>No special days saved yet.<br>Tap <strong>+</strong> to add your first one!</p></div>`;
-    return;
-  }
-  let html = '';
-  if (next30.length > 0) {
-    html += `<p class="text-xs font-semibold mb-3" style="color:var(--muted);letter-spacing:0.5px;">COMING UP</p>`;
-    next30.forEach((ev, i) => { html += renderEventCard(ev, i); });
-  }
-  const later = sorted.filter(e => e.daysUntil > 30);
-  if (later.length > 0) {
-    html += `<p class="text-xs font-semibold mb-3 mt-5" style="color:var(--muted);letter-spacing:0.5px;">LATER</p>`;
-    later.forEach((ev, i) => { html += renderEventCard(ev, i + next30.length); });
-  }
-  list.innerHTML = html;
-}
-
-function renderEventCard(ev, idx) {
-  const cd = formatCountdown(ev.daysUntil);
-  const cat = CATEGORIES[ev.category] || CATEGORIES.custom;
-  const nextOcc = getNextOccurrence(ev.date);
-  const sentThisYear = ev.lastSentYear === nextOcc.getFullYear();
-  const hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g, '').length >= 8;
-
-  // Build the action buttons row
-  let actionBtns = '';
-  if (hasPhone) {
-    actionBtns = `
-      <button class="btn btn-whatsapp btn-xs" onclick="directWhatsApp('${ev.id}',event)">
-        <i class="fa-brands fa-whatsapp"></i> WhatsApp
-      </button>
-      <button class="btn btn-sms btn-xs" onclick="directSMS('${ev.id}',event)">
-        <i class="fa-solid fa-comment-sms"></i> SMS
-      </button>`;
-  } else {
-    actionBtns = `<button class="btn btn-secondary btn-xs" onclick="openAddModal('${ev.id}')">
-      <i class="fa-solid fa-phone"></i> Add Phone
-    </button>`;
-  }
-
-  return `<div class="event-card mb-3" style="animation:slideUp 0.3s ease ${idx*50}ms both;">
-    <div class="flex items-start justify-between gap-3">
-      <div class="flex items-start gap-3 flex-1 min-w-0">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 cat-${ev.category}">
-          <i class="fa-solid ${cat.icon} text-sm"></i>
-        </div>
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2 flex-wrap">
-            <h3 class="font-bold text-sm truncate">${escHtml(ev.name)}</h3>
-            ${sentThisYear ? '<span class="sent-badge"><i class="fa-solid fa-check-circle"></i> Sent</span>' : ''}
-          </div>
-          <p class="text-xs mt-0.5" style="color:var(--muted);">${formatDate(ev.date)}${ev.contactName ? ' &middot; ' + escHtml(ev.contactName) : ''}</p>
-          ${hasPhone ? `<p class="text-[11px] mt-0.5" style="color:var(--border);">${escHtml(ev.phone)}</p>` : ''}
-        </div>
-      </div>
-      <div class="text-right flex-shrink-0">
-        <div class="countdown-big ${cd.cls}">${cd.text === 'TODAY' ? '!' : cd.text === 'Tomorrow' ? '1' : cd.text.split(' ')[0]}</div>
-        <div class="countdown-label">${cd.text === 'TODAY' ? 'Today' : cd.text === 'Tomorrow' ? 'day' : cd.text.includes('m') ? '' : 'days'}</div>
-      </div>
-    </div>
-    <div class="flex items-center gap-2 mt-3 flex-wrap">
-      ${actionBtns}
-      <div class="flex-1"></div>
-      <button class="btn-icon btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
-      <button class="btn-icon btn-danger btn-sm" onclick="confirmDelete('${ev.id}')" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>
-    </div>
-  </div>`;
-}
-
+/* ===== ESCAPE HTML ===== */
 function escHtml(s) {
   if (!s) return '';
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ==================== Rendering: Calendar ==================== */
+/* ===== RENDER: UPCOMING ===== */
+function renderUpcoming() {
+  var list = document.getElementById('upcoming-list');
+  var sorted = getSortedEvents().filter(function(e) { return e.daysUntil <= 90; });
+  var next30 = sorted.filter(function(e) { return e.daysUntil <= 30; });
+  if (sorted.length === 0) {
+    list.innerHTML = '<div class="empty-state"><i class="fa-regular fa-calendar-plus block"></i><p>No special days saved yet.<br>Tap <strong>+</strong> to add your first one!</p></div>';
+    return;
+  }
+  var html = '';
+  if (next30.length > 0) {
+    html += '<p class="text-xs font-semibold mb-3" style="color:var(--muted);letter-spacing:0.5px">COMING UP</p>';
+    for (var i = 0; i < next30.length; i++) html += renderEventCard(next30[i], i);
+  }
+  var later = sorted.filter(function(e) { return e.daysUntil > 30; });
+  if (later.length > 0) {
+    html += '<p class="text-xs font-semibold mb-3 mt-5" style="color:var(--muted);letter-spacing:0.5px">LATER</p>';
+    for (var j = 0; j < later.length; j++) html += renderEventCard(later[j], j + next30.length);
+  }
+  list.innerHTML = html;
+}
+
+function renderEventCard(ev, idx) {
+  var cd = formatCountdown(ev.daysUntil);
+  var cat = CATEGORIES[ev.category] || CATEGORIES.custom;
+  var nextOcc = getNextOccurrence(ev.date);
+  var sentThisYear = ev.lastSentYear === nextOcc.getFullYear();
+  var hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g, '').length >= 8;
+  var remindLabel = REMIND_LABELS[ev.remindBefore] || (ev.remindBefore + ' days before');
+
+  var actionBtns = '';
+  if (hasPhone) {
+    actionBtns = '<button class="btn btn-whatsapp btn-xs" onclick="directWhatsApp(\'' + ev.id + '\',event)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>' +
+      '<button class="btn btn-sms btn-xs" onclick="directSMS(\'' + ev.id + '\',event)"><i class="fa-solid fa-comment-sms"></i> SMS</button>';
+  } else {
+    actionBtns = '<button class="btn btn-secondary btn-xs" onclick="openAddModal(\'' + ev.id + '\')"><i class="fa-solid fa-phone"></i> Add Phone</button>';
+  }
+
+  var countdownNum = cd.text === 'TODAY' ? '!' : cd.text === 'Tomorrow' ? '1' : cd.text.split(' ')[0];
+  var countdownLbl = cd.text === 'TODAY' ? 'Today' : cd.text === 'Tomorrow' ? 'day' : cd.text.indexOf('m') >= 0 ? '' : 'days';
+
+  return '<div class="event-card mb-3" style="animation:slideUp 0.3s ease ' + (idx*50) + 'ms both">' +
+    '<div class="flex items-start justify-between gap-3">' +
+      '<div class="flex items-start gap-3 flex-1 min-w-0">' +
+        '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 cat-' + ev.category + '"><i class="fa-solid ' + cat.icon + ' text-sm"></i></div>' +
+        '<div class="min-w-0 flex-1">' +
+          '<div class="flex items-center gap-2 flex-wrap">' +
+            '<h3 class="font-bold text-sm truncate">' + escHtml(ev.name) + '</h3>' +
+            (sentThisYear ? '<span class="sent-badge"><i class="fa-solid fa-check-circle"></i> Sent</span>' : '') +
+          '</div>' +
+          '<p class="text-xs mt-0.5" style="color:var(--muted)">' + formatDate(ev.date) + (ev.contactName ? ' &middot; ' + escHtml(ev.contactName) : '') + '</p>' +
+          (hasPhone ? '<p class="text-[11px] mt-0.5" style="color:var(--border)">' + escHtml(ev.phone) + '</p>' : '') +
+          '<div class="flex gap-3 mt-1.5"><span class="remind-badge"><i class="fa-regular fa-bell"></i> ' + remindLabel + '</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="text-right flex-shrink-0">' +
+        '<div class="countdown-big ' + cd.cls + '">' + countdownNum + '</div>' +
+        '<div class="countdown-label">' + countdownLbl + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="flex items-center gap-2 mt-3 flex-wrap">' +
+      actionBtns +
+      '<div class="flex-1"></div>' +
+      '<button class="btn-icon btn-secondary btn-sm" onclick="openAddModal(\'' + ev.id + '\')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>' +
+      '<button class="btn-icon btn-danger btn-sm" onclick="confirmDelete(\'' + ev.id + '\')" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ===== RENDER: CALENDAR ===== */
 function renderCalendar() {
-  document.getElementById('cal-title').textContent = `${MONTHS[calMonth]} ${calYear}`;
-  const grid = document.getElementById('cal-grid');
-  const firstDay = new Date(calYear, calMonth, 1);
-  const lastDay = new Date(calYear, calMonth + 1, 0);
-  const startDow = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = lastDay.getDate();
-  const td = todayStr();
-  let html = '<div class="grid grid-cols-7 gap-1 mb-1">';
-  DAYS_SHORT.forEach(d => { html += `<div class="text-center text-[11px] font-semibold py-1" style="color:var(--muted);">${d}</div>`; });
+  document.getElementById('cal-title').textContent = MONTHS[calMonth] + ' ' + calYear;
+  var grid = document.getElementById('cal-grid');
+  var firstDay = new Date(calYear, calMonth, 1);
+  var lastDay = new Date(calYear, calMonth + 1, 0);
+  var startDow = (firstDay.getDay() + 6) % 7;
+  var daysInMonth = lastDay.getDate();
+  var td = todayStr();
+  var html = '<div class="grid grid-cols-7 gap-1 mb-1">';
+  for (var d = 0; d < DAYS_SHORT.length; d++) html += '<div class="text-center text-[11px] font-semibold py-1" style="color:var(--muted)">' + DAYS_SHORT[d] + '</div>';
   html += '</div><div class="grid grid-cols-7 gap-1">';
-  for (let i = 0; i < startDow; i++) html += '<div></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const evts = getEventsForDate(ds);
-    const isToday = ds === td;
-    const isSel = ds === calSelectedDate;
-    html += `<div class="cal-day${isToday?' today':''}${isSel?' selected':''}" onclick="selectCalDate('${ds}')">
-      <span>${d}</span>
-      ${evts.length ? `<div class="cal-dots">${evts.slice(0,3).map(e=>`<span class="cal-dot cat-dot-${e.category}"></span>`).join('')}</div>` : ''}
-    </div>`;
+  for (var i = 0; i < startDow; i++) html += '<div></div>';
+  for (var day = 1; day <= daysInMonth; day++) {
+    var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    var evts = getEventsForDate(ds);
+    var isToday = ds === td;
+    var isSel = ds === calSelectedDate;
+    var dots = '';
+    if (evts.length) {
+      dots = '<div class="cal-dots">';
+      for (var e = 0; e < Math.min(evts.length, 3); e++) dots += '<span class="cal-dot cat-dot-' + evts[e].category + '"></span>';
+      dots += '</div>';
+    }
+    html += '<div class="cal-day' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="selectCalDate(\'' + ds + '\')"><span>' + day + '</span>' + dots + '</div>';
   }
   html += '</div>';
   grid.innerHTML = html;
   renderCalEvents();
 }
+
 function renderCalEvents() {
-  const area = document.getElementById('cal-events');
+  var area = document.getElementById('cal-events');
   if (!calSelectedDate) { area.innerHTML = ''; return; }
-  const evts = getEventsForDate(calSelectedDate);
-  if (!evts.length) { area.innerHTML = `<p class="text-sm text-center py-4" style="color:var(--muted);">No events on this date</p>`; return; }
-  const d = new Date(calSelectedDate + 'T00:00:00');
-  area.innerHTML = `<p class="text-xs font-semibold mb-2" style="color:var(--muted);">${MONTHS[d.getMonth()]} ${d.getDate()}</p>` +
-    evts.map(ev => {
-      const cat = CATEGORIES[ev.category] || CATEGORIES.custom;
-      const hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g,'').length >= 8;
-      let btns = '';
-      if (hasPhone) {
-        btns = `
-          <button class="btn-icon btn-whatsapp btn-sm" onclick="directWhatsApp('${ev.id}',event)" title="WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></button>
-          <button class="btn-icon btn-sms btn-sm" onclick="directSMS('${ev.id}',event)" title="SMS"><i class="fa-solid fa-comment-sms text-sm"></i></button>`;
-      }
-      return `<div class="event-card mb-2">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center cat-${ev.category}"><i class="fa-solid ${cat.icon} text-xs"></i></div>
-          <div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate">${escHtml(ev.name)}</p>${ev.contactName?`<p class="text-xs" style="color:var(--muted);">${escHtml(ev.contactName)}</p>`:''}</div>
-          <div class="flex gap-1.5">
-            ${btns}
-            <button class="btn-icon btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
+  var evts = getEventsForDate(calSelectedDate);
+  if (!evts.length) { area.innerHTML = '<p class="text-sm text-center py-4" style="color:var(--muted)">No events on this date</p>'; return; }
+  var d = new Date(calSelectedDate + 'T00:00:00');
+  var html = '<p class="text-xs font-semibold mb-2" style="color:var(--muted)">' + MONTHS[d.getMonth()] + ' ' + d.getDate() + '</p>';
+  for (var i = 0; i < evts.length; i++) {
+    var ev = evts[i];
+    var cat = CATEGORIES[ev.category] || CATEGORIES.custom;
+    var hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g,'').length >= 8;
+    var btns = '';
+    if (hasPhone) {
+      btns = '<button class="btn-icon btn-whatsapp btn-sm" onclick="directWhatsApp(\'' + ev.id + '\',event)" title="WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></button>' +
+        '<button class="btn-icon btn-sms btn-sm" onclick="directSMS(\'' + ev.id + '\',event)" title="SMS"><i class="fa-solid fa-comment-sms text-sm"></i></button>';
+    }
+    html += '<div class="event-card mb-2"><div class="flex items-center gap-3">' +
+      '<div class="w-8 h-8 rounded-lg flex items-center justify-center cat-' + ev.category + '"><i class="fa-solid ' + cat.icon + ' text-xs"></i></div>' +
+      '<div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate">' + escHtml(ev.name) + '</p>' + (ev.contactName ? '<p class="text-xs" style="color:var(--muted)">' + escHtml(ev.contactName) + '</p>' : '') + '</div>' +
+      '<div class="flex gap-1.5">' + btns + '<button class="btn-icon btn-secondary btn-sm" onclick="openAddModal(\'' + ev.id + '\')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button></div>' +
+    '</div></div>';
+  }
+  area.innerHTML = html;
 }
+
 function calNav(dir) {
   calMonth += dir;
   if (calMonth > 11) { calMonth = 0; calYear++; }
@@ -731,49 +638,95 @@ function selectCalDate(ds) {
   renderCalendar();
 }
 
-/* ==================== Rendering: All Dates ==================== */
+/* ===== RENDER: ALL DATES ===== */
 function renderAll() {
-  const list = document.getElementById('all-list');
-  const query = document.getElementById('search-input').value.toLowerCase().trim();
-  let events = getSortedEvents();
-  if (currentFilter !== 'all') events = events.filter(e => e.category === currentFilter);
-  if (query) events = events.filter(e =>
-    e.name.toLowerCase().includes(query) ||
-    (e.contactName && e.contactName.toLowerCase().includes(query)) ||
-    (e.phone && e.phone.includes(query))
-  );
+  var list = document.getElementById('all-list');
+  var query = document.getElementById('search-input').value.toLowerCase().trim();
+  var events = getSortedEvents();
+  if (currentFilter !== 'all') events = events.filter(function(e) { return e.category === currentFilter; });
+  if (query) events = events.filter(function(e) {
+    return e.name.toLowerCase().indexOf(query) >= 0 || (e.contactName && e.contactName.toLowerCase().indexOf(query) >= 0) || (e.phone && e.phone.indexOf(query) >= 0);
+  });
   if (!events.length) {
-    list.innerHTML = `<div class="empty-state"><i class="fa-solid fa-magnifying-glass block"></i><p>${query ? 'No events match your search.' : 'No events in this category.'}</p></div>`;
+    list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-magnifying-glass block"></i><p>' + (query ? 'No events match your search.' : 'No events in this category.') + '</p></div>';
     return;
   }
-  list.innerHTML = events.map((ev, i) => renderEventCard(ev, i)).join('');
+  var html = '';
+  for (var i = 0; i < events.length; i++) html += renderEventCard(events[i], i);
+  list.innerHTML = html;
 }
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('#filter-cats .seg-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#filter-cats .seg-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   renderAll();
 }
 
-/* ==================== Modals ==================== */
+/* ===== MODALS ===== */
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('open'); });
 });
 
+function setCat(val, btn) {
+  document.getElementById('f-category').value = val;
+  document.querySelectorAll('#f-cat-seg .seg-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  selectedTplIdx = 0;
+  userEditedMessage = false;
+  renderEmojiBar(val);
+  renderTemplateChips(val, 0);
+  /* auto-fill first template */
+  var tpl = (TEMPLATES[val] || TEMPLATES.custom)[0];
+  document.getElementById('f-message').value = tpl.replace('{name}', getNameForTemplate());
+  updateCharCounter();
+}
+
+function setRemind(val, btn) {
+  document.getElementById('f-remind').value = val;
+  document.querySelectorAll('#f-remind-seg .seg-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+}
+
+function renderEmojiBar(category) {
+  var bar = document.getElementById('emoji-bar');
+  var emojis = EMOJI_SETS[category] || EMOJI_SETS.custom;
+  var html = '';
+  for (var i = 0; i < emojis.length; i++) {
+    html += '<button type="button" class="emoji-btn" onclick="insertEmoji(\'' + emojis[i] + '\')">' + emojis[i] + '</button>';
+  }
+  bar.innerHTML = html;
+}
+
+function insertEmoji(emoji) {
+  var ta = document.getElementById('f-message');
+  var start = ta.selectionStart, end = ta.selectionEnd;
+  ta.value = ta.value.substring(0, start) + emoji + ta.value.substring(end);
+  ta.selectionStart = ta.selectionEnd = start + emoji.length;
+  ta.focus();
+  userEditedMessage = true;
+  updateCharCounter();
+  document.querySelectorAll('.tpl-chip').forEach(function(c) { c.classList.remove('selected'); });
+}
+
 function openAddModal(editId) {
-  const form = document.getElementById('event-form');
+  var form = document.getElementById('event-form');
   form.reset();
   document.getElementById('f-id').value = '';
   document.getElementById('f-remind').value = '3';
   document.getElementById('f-category').value = 'birthday';
-  setCat('birthday', document.querySelector('#f-cat-seg [data-val="birthday"]'));
+  userEditedMessage = false;
+  selectedTplIdx = 0;
+
+  /* set category segment UI without triggering auto-fill yet */
+  document.querySelectorAll('#f-cat-seg .seg-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('#f-cat-seg [data-val="birthday"]').classList.add('active');
   setRemind(3, document.querySelector('#f-remind-seg [data-val="3"]'));
-  renderEmojiBar('birthday');
-  updateFormCharCount();
+
   if (editId) {
-    const ev = getEvents().find(e => e.id === editId);
+    /* EDIT MODE */
+    var ev = getEvents().find(function(e) { return e.id === editId; });
     if (ev) {
       document.getElementById('modal-add-title').textContent = 'Edit Special Day';
       document.getElementById('form-submit-text').textContent = 'Update Event';
@@ -783,69 +736,53 @@ function openAddModal(editId) {
       document.getElementById('f-contact').value = ev.contactName || '';
       document.getElementById('f-phone').value = ev.phone || '';
       document.getElementById('f-message').value = ev.message || '';
-      setCat(ev.category || 'birthday', document.querySelector(`#f-cat-seg [data-val="${ev.category||'birthday'}"]`));
-      setRemind(ev.remindBefore ?? 3, document.querySelector(`#f-remind-seg [data-val="${ev.remindBefore??3}"]`));
-      renderEmojiBar(ev.category || 'birthday');
-      updateFormCharCount();
-      const tplSelect = document.getElementById('f-template');
-      if (ev.message) {
-        let matched = false;
-        for (const [key, tpl] of Object.entries(TEMPLATES)) {
-          if (key !== 'custom' && ev.message.includes(tpl.replace('{name}', '').trim().slice(0, 20))) {
-            tplSelect.value = key; matched = true; break;
-          }
-        }
-        if (!matched) tplSelect.value = 'custom';
+
+      var cat = ev.category || 'birthday';
+      document.getElementById('f-category').value = cat;
+      document.querySelectorAll('#f-cat-seg .seg-btn').forEach(function(b) { b.classList.remove('active'); });
+      var catBtn = document.querySelector('#f-cat-seg [data-val="' + cat + '"]');
+      if (catBtn) catBtn.classList.add('active');
+
+      if (ev.remindBefore !== undefined && ev.remindBefore !== null) {
+        setRemind(ev.remindBefore, document.querySelector('#f-remind-seg [data-val="' + ev.remindBefore + '"]'));
       }
+
+      /* try to match saved message to a template */
+      selectedTplIdx = -1;
+      var tpls = TEMPLATES[cat] || TEMPLATES.custom;
+      for (var t = 0; t < tpls.length; t++) {
+        if (ev.message && ev.message.indexOf(tpls[t].replace('{name}', '').trim().substring(0, 25)) >= 0) {
+          selectedTplIdx = t; break;
+        }
+      }
+      if (selectedTplIdx < 0) {
+        userEditedMessage = true; /* custom message, no template match */
+        selectedTplIdx = 0;
+      }
+
+      renderEmojiBar(cat);
+      renderTemplateChips(cat, userEditedMessage ? -1 : selectedTplIdx);
+      updateCharCounter();
     }
   } else {
+    /* ADD MODE */
     document.getElementById('modal-add-title').textContent = 'Add Special Day';
     document.getElementById('form-submit-text').textContent = 'Save Event';
-    applyTemplate();
+    renderEmojiBar('birthday');
+    renderTemplateChips('birthday', 0);
+    var tpl = TEMPLATES.birthday[0];
+    document.getElementById('f-message').value = tpl.replace('{name}', getNameForTemplate());
+    updateCharCounter();
   }
+
   openModal('modal-add');
 }
 
-function setCat(val, btn) {
-  document.getElementById('f-category').value = val;
-  document.querySelectorAll('#f-cat-seg .seg-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderEmojiBar(val);
-  if (val === 'birthday' || val === 'anniversary') document.getElementById('f-template').value = val;
-  applyTemplate();
-}
-function setRemind(val, btn) {
-  document.getElementById('f-remind').value = val;
-  document.querySelectorAll('#f-remind-seg .seg-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-}
-function renderEmojiBar(category) {
-  const bar = document.getElementById('emoji-bar');
-  const emojis = EMOJI_SETS[category] || EMOJI_SETS.custom;
-  bar.innerHTML = emojis.map(e => `<button type="button" class="emoji-btn" onclick="insertEmoji('${e}')">${e}</button>`).join('');
-}
-function insertEmoji(emoji) {
-  const ta = document.getElementById('f-message');
-  const start = ta.selectionStart, end = ta.selectionEnd;
-  ta.value = ta.value.substring(0, start) + emoji + ta.value.substring(end);
-  ta.selectionStart = ta.selectionEnd = start + emoji.length;
-  ta.focus();
-  updateFormCharCount();
-}
-function applyTemplate() {
-  const key = document.getElementById('f-template').value;
-  const name = document.getElementById('f-contact').value || document.getElementById('f-name').value || 'there';
-  const tpl = TEMPLATES[key] || '';
-  if (key !== 'custom' && !document.getElementById('f-message').value) {
-    document.getElementById('f-message').value = tpl.replace('{name}', name);
-  }
-  updateFormCharCount();
-}
 function handleFormSubmit(e) {
   e.preventDefault();
-  const id = document.getElementById('f-id').value;
-  const ev = {
-    id: id || 'ev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+  var id = document.getElementById('f-id').value;
+  var ev = {
+    id: id || ('ev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
     name: document.getElementById('f-name').value.trim(),
     date: document.getElementById('f-date').value,
     category: document.getElementById('f-category').value,
@@ -854,179 +791,186 @@ function handleFormSubmit(e) {
     message: document.getElementById('f-message').value.trim(),
     remindBefore: parseInt(document.getElementById('f-remind').value),
     remindSentYear: null,
-    lastSentYear: id ? (getEvents().find(e2 => e2.id === id)?.lastSentYear || null) : null,
-    createdAt: id ? (getEvents().find(e2 => e2.id === id)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+    lastSentYear: null,
+    createdAt: new Date().toISOString()
   };
+  /* preserve sent year if editing */
+  if (id) {
+    var old = getEvents().find(function(e2) { return e2.id === id; });
+    if (old) ev.lastSentYear = old.lastSentYear || null;
+  }
   saveEvent(ev);
   closeModal('modal-add');
 }
 
-/* ==================== Direct Send: WhatsApp & SMS ==================== */
+/* ===== DIRECT SEND ===== */
 function getResolvedMessage(ev) {
-  const name = ev.contactName || ev.name;
+  var name = ev.contactName || ev.name;
   return (ev.message || '').replace(/\{name\}/g, name);
 }
-
 function markAsSent(evId) {
-  const ev = getEvents().find(e => e.id === evId);
+  var ev = getEvents().find(function(e) { return e.id === evId; });
   if (!ev) return;
-  const nextYear = getNextOccurrence(ev.date).getFullYear();
-  ev.lastSentYear = nextYear;
+  ev.lastSentYear = getNextOccurrence(ev.date).getFullYear();
   saveEvent(ev, true);
 }
-
 function directWhatsApp(evId, evt) {
-  const ev = getEvents().find(e => e.id === evId);
+  var ev = getEvents().find(function(e) { return e.id === evId; });
   if (!ev || !ev.phone) { showToast('No phone number set', 'error'); return; }
-  const msg = getResolvedMessage(ev);
-  const phone = ev.phone.replace(/[^0-9+]/g, '');
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  var msg = getResolvedMessage(ev);
+  var phone = ev.phone.replace(/[^0-9+]/g, '');
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
   markAsSent(evId);
-  if (evt) { const r = evt.currentTarget.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
+  if (evt) { var r = evt.currentTarget.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
   if (settings.soundEnabled) playChime();
-  setTimeout(() => { renderCurrentPage(); showToast('Opened WhatsApp — just tap Send!', 'success'); }, 300);
+  setTimeout(function() { renderCurrentPage(); showToast('Opened WhatsApp — just tap Send!', 'success'); }, 300);
 }
-
 function directSMS(evId, evt) {
-  const ev = getEvents().find(e => e.id === evId);
+  var ev = getEvents().find(function(e) { return e.id === evId; });
   if (!ev || !ev.phone) { showToast('No phone number set', 'error'); return; }
-  let msg = getResolvedMessage(ev);
+  var msg = getResolvedMessage(ev);
   if (msg.length > SMS_LIMIT) {
     msg = msg.substring(0, SMS_LIMIT - 3) + '...';
-    showToast(`Message truncated to ${SMS_LIMIT} characters for SMS`, 'info');
+    showToast('Message truncated to ' + SMS_LIMIT + ' characters for SMS', 'info');
   }
-  const phone = ev.phone.replace(/[^0-9+]/g, '');
-  window.location.href = `sms:${phone}?body=${encodeURIComponent(msg)}`;
+  var phone = ev.phone.replace(/[^0-9+]/g, '');
+  window.location.href = 'sms:' + phone + '?body=' + encodeURIComponent(msg);
   markAsSent(evId);
-  if (evt) { const r = evt.currentTarget.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
+  if (evt) { var r = evt.currentTarget.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
   if (settings.soundEnabled) playChime();
-  setTimeout(() => { renderCurrentPage(); showToast('Opened Messages — just tap Send!', 'success'); }, 500);
+  setTimeout(function() { renderCurrentPage(); showToast('Opened Messages — just tap Send!', 'success'); }, 500);
 }
 
-/* ==================== Confirm Actions ==================== */
+/* ===== CONFIRM ACTIONS ===== */
 function confirmDelete(id) {
-  const ev = getEvents().find(e => e.id === id);
+  var ev = getEvents().find(function(e) { return e.id === id; });
   if (!ev) return;
-  document.getElementById('confirm-text').textContent = `Delete "${ev.name}"? This can't be undone.`;
-  const btn = document.getElementById('confirm-action-btn');
+  document.getElementById('confirm-text').textContent = 'Delete "' + ev.name + '"? This can\'t be undone.';
+  var btn = document.getElementById('confirm-action-btn');
   btn.textContent = 'Delete';
-  btn.onclick = () => { deleteEvent(id); closeModal('modal-confirm'); };
+  btn.onclick = function() { deleteEvent(id); closeModal('modal-confirm'); };
   openModal('modal-confirm');
 }
 function confirmClearAll() {
-  const events = getEvents();
+  var events = getEvents();
   if (!events.length) { showToast('No events to clear', 'info'); return; }
-  document.getElementById('confirm-text').textContent = `Delete ALL ${events.length} events? This can't be undone.`;
-  const btn = document.getElementById('confirm-action-btn');
+  document.getElementById('confirm-text').textContent = 'Delete ALL ' + events.length + ' events? This can\'t be undone.';
+  var btn = document.getElementById('confirm-action-btn');
   btn.textContent = 'Delete All';
-  btn.onclick = () => { saveEvents([]); closeModal('modal-confirm'); renderCurrentPage(); showToast('All events deleted', 'info'); };
+  btn.onclick = function() { saveEvents([]); closeModal('modal-confirm'); renderCurrentPage(); showToast('All events deleted', 'info'); };
   openModal('modal-confirm');
 }
 
-/* ==================== Navigation ==================== */
+/* ===== NAVIGATION ===== */
 function navigate(page, btn) {
   currentPage = page;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(`page-${page}`).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   if (btn) btn.classList.add('active');
   renderCurrentPage();
 }
 function renderCurrentPage() {
-  switch (currentPage) {
-    case 'upcoming': renderUpcoming(); break;
-    case 'calendar': renderCalendar(); break;
-    case 'all': renderAll(); break;
-  }
+  if (currentPage === 'upcoming') renderUpcoming();
+  else if (currentPage === 'calendar') renderCalendar();
+  else if (currentPage === 'all') renderAll();
   updateHeaderSubtitle();
 }
 function updateHeaderSubtitle() {
-  const el = document.getElementById('header-subtitle');
-  const sorted = getSortedEvents();
-  const today = sorted.filter(e => e.daysUntil === 0);
+  var el = document.getElementById('header-subtitle');
+  var sorted = getSortedEvents();
+  var today = sorted.filter(function(e) { return e.daysUntil === 0; });
   if (today.length) {
-    el.textContent = `${today.length} event${today.length > 1 ? 's' : ''} today!`;
+    el.textContent = today.length + ' event' + (today.length > 1 ? 's' : '') + ' today!';
     el.style.color = 'var(--green)';
   } else if (sorted.length) {
-    el.textContent = `Next: ${sorted[0].name} in ${formatCountdown(sorted[0].daysUntil).text}`;
+    el.textContent = 'Next: ' + sorted[0].name + ' in ' + formatCountdown(sorted[0].daysUntil).text;
     el.style.color = 'var(--muted)';
   } else {
     el.textContent = 'Never miss a moment';
     el.style.color = 'var(--muted)';
   }
-  const upcoming = sorted.filter(e => e.daysUntil <= 1 && e.daysUntil >= 0);
-  const badge = document.getElementById('notif-badge');
+  var upcoming = sorted.filter(function(e) { return e.daysUntil <= 1 && e.daysUntil >= 0; });
+  var badge = document.getElementById('notif-badge');
   if (upcoming.length) { badge.textContent = upcoming.length; badge.classList.remove('hidden'); }
   else { badge.classList.add('hidden'); }
 }
 
-/* ==================== Import / Export ==================== */
+/* ===== IMPORT / EXPORT ===== */
 function exportData() {
-  const events = getEvents();
+  var events = getEvents();
   if (!events.length) { showToast('No events to export', 'info'); return; }
-  const blob = new Blob([JSON.stringify(events, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `special-days-backup-${todayStr()}.json`;
+  var blob = new Blob([JSON.stringify(events, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'special-days-backup-' + todayStr() + '.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast(`Exported ${events.length} events`, 'success');
+  showToast('Exported ' + events.length + ' events', 'success');
 }
 function importData(file) {
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
+  var reader = new FileReader();
+  reader.onload = function(e) {
     try {
-      const data = JSON.parse(e.target.result);
+      var data = JSON.parse(e.target.result);
       if (!Array.isArray(data)) throw new Error('Not an array');
-      let count = 0;
-      const existing = getEvents();
-      data.forEach(ev => {
+      var count = 0;
+      var existing = getEvents();
+      for (var i = 0; i < data.length; i++) {
+        var ev = data[i];
         if (ev.name && ev.date) {
           ev.id = 'ev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6) + count;
           ev.remindSentYear = null; ev.lastSentYear = null;
           existing.push(ev); count++;
         }
-      });
+      }
       saveEvents(existing);
       renderCurrentPage();
-      showToast(`Imported ${count} events`, 'success');
-    } catch (err) { showToast('Invalid file format. Expected a JSON array of events.', 'error'); }
+      showToast('Imported ' + count + ' events', 'success');
+    } catch(err) { showToast('Invalid file format. Expected a JSON array of events.', 'error'); }
   };
   reader.readAsText(file);
 }
 
-/* ==================== Auto-fill contact name ==================== */
-document.getElementById('f-contact').addEventListener('input', () => {
-  const tplKey = document.getElementById('f-template').value;
-  if (tplKey !== 'custom') {
-    const name = document.getElementById('f-contact').value.trim() || document.getElementById('f-name').value.trim() || 'there';
-    document.getElementById('f-message').value = (TEMPLATES[tplKey] || '').replace('{name}', name);
-    updateFormCharCount();
+/* ===== CONTACT NAME → AUTO-UPDATE TEMPLATES ===== */
+document.getElementById('f-contact').addEventListener('input', function() {
+  var category = document.getElementById('f-category').value;
+  /* only auto-update message if user hasn't manually edited */
+  if (!userEditedMessage) {
+    var tpl = (TEMPLATES[category] || TEMPLATES.custom)[selectedTplIdx] || (TEMPLATES[category] || TEMPLATES.custom)[0];
+    document.getElementById('f-message').value = tpl.replace('{name}', getNameForTemplate());
+    updateCharCounter();
   }
+  /* always refresh chip previews */
+  renderTemplateChips(category, userEditedMessage ? -1 : selectedTplIdx);
 });
 
-/* ==================== Init ==================== */
+/* ===== INIT ===== */
 function init() {
   loadSettings();
-  const now = new Date();
+  var now = new Date();
   calYear = now.getFullYear();
   calMonth = now.getMonth();
+
+  /* seed demo data on first visit */
   if (!localStorage.getItem(STORAGE_KEY)) {
-    const demoEvents = [
-      { id:'demo_1', name:"Mom's Birthday", date:'1965-03-15', category:'birthday', contactName:'Mom', phone:'+91 98765 43210', message:'Mom, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🎂❤️', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_2', name:"Wedding Anniversary", date:'2020-06-22', category:'anniversary', contactName:'Sweetheart', phone:'+91 87654 32109', message:'Sweetheart, Happy Anniversary! Cheers to another beautiful year of wonderful memories together! 🥂💕', remindBefore:1, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_3', name:"Dad's Birthday", date:'1960-08-09', category:'birthday', contactName:'Dad', phone:'+91 76543 21098', message:'Dad, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🎉🌟', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_4', name:"Best Friend's Birthday", date:'1995-12-03', category:'birthday', contactName:'Alex', phone:'+91 65432 10987', message:'Alex, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🥳🎈', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_5', name:"Graduation Day", date:'2025-05-15', category:'custom', contactName:'Sarah', phone:'+91 54321 09876', message:'Sarah, Congratulations! So proud of you! Here\'s to many more amazing achievements! 🎊🏆', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+    var demo = [
+      { id:'demo_1', name:"Mom's Birthday", date:'1965-03-15', category:'birthday', contactName:'Mom', phone:'+91 98765 43210', message:'Mom, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things!', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_2', name:"Wedding Anniversary", date:'2020-06-22', category:'anniversary', contactName:'Sweetheart', phone:'+91 87654 32109', message:'Sweetheart, Happy Anniversary! Cheers to another beautiful year of wonderful memories together!', remindBefore:1, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_3', name:"Dad's Birthday", date:'1960-08-09', category:'birthday', contactName:'Dad', phone:'+91 76543 21098', message:'Dad, Happy Birthday! Another year older, another year wiser. May this year bring you endless joy and success!', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_4', name:"Best Friend's Birthday", date:'1995-12-03', category:'birthday', contactName:'Alex', phone:'+91 65432 10987', message:'Alex, it\'s your special day! Hope it\'s as amazing as you are. Happy Birthday!', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_5', name:"Graduation Day", date:'2025-05-15', category:'custom', contactName:'Sarah', phone:'+91 54321 09876', message:'Sarah, Congratulations! So proud of you! Here\'s to many more amazing achievements!', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() }
     ];
-    saveEvents(demoEvents);
+    saveEvents(demo);
   }
+
   renderCurrentPage();
   checkReminders();
   setInterval(checkReminders, 30000);
-  setInterval(() => { if (currentPage === 'upcoming' || currentPage === 'all') renderCurrentPage(); }, 60000);
+  setInterval(function() { if (currentPage === 'upcoming' || currentPage === 'all') renderCurrentPage(); }, 60000);
 }
+
 init();
 </script>
 </body>
