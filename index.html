@@ -15,6 +15,7 @@ tailwind.config = { theme: { extend: { fontFamily: { sans: ['Outfit','sans-serif
   --bg: #151210; --bg2: #1e1a17; --card: #262220; --card-hover: #2e2a27;
   --border: #3a3532; --text: #f5f0eb; --muted: #9a928a; --accent: #e8a030;
   --accent2: #d4882a; --rose: #e8506a; --green: #34c770; --violet: #9b6dff;
+  --sms-blue: #2196F3;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
@@ -36,7 +37,6 @@ textarea { resize: vertical; min-height: 80px; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 @keyframes confettiFall {
   0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
   100% { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; }
@@ -154,6 +154,8 @@ textarea { resize: vertical; min-height: 80px; }
 .btn-danger:hover { background: rgba(232,80,106,0.25); }
 .btn-whatsapp { background: #25D366; color: #fff; }
 .btn-whatsapp:hover { background: #1fa854; }
+.btn-sms { background: var(--sms-blue); color: #fff; }
+.btn-sms:hover { background: #1976D2; }
 .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
 .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 8px; }
 
@@ -174,6 +176,11 @@ textarea { resize: vertical; min-height: 80px; }
   pointer-events: none; z-index: 0;
 }
 
+.char-counter { font-size: 11px; text-align: right; margin-top: 4px; }
+.char-ok { color: var(--muted); }
+.char-warn { color: var(--accent); }
+.char-over { color: var(--rose); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
@@ -185,7 +192,6 @@ textarea { resize: vertical; min-height: 80px; }
 <div class="bg-glow-2"></div>
 
 <div id="app" class="relative z-10 max-w-lg mx-auto min-h-screen pb-24">
-  <!-- Header -->
   <header class="sticky top-0 z-40 px-5 pt-4 pb-3 flex items-center justify-between" style="background:linear-gradient(var(--bg) 60%, transparent);">
     <div>
       <h1 class="text-xl font-bold tracking-tight">Special Days</h1>
@@ -197,12 +203,10 @@ textarea { resize: vertical; min-height: 80px; }
     </button>
   </header>
 
-  <!-- Page: Upcoming -->
   <div id="page-upcoming" class="page active px-5">
     <div id="upcoming-list"></div>
   </div>
 
-  <!-- Page: Calendar -->
   <div id="page-calendar" class="page px-5">
     <div class="flex items-center justify-between mb-4">
       <button class="btn-icon btn-secondary" onclick="calNav(-1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
@@ -213,7 +217,6 @@ textarea { resize: vertical; min-height: 80px; }
     <div id="cal-events" class="mt-4"></div>
   </div>
 
-  <!-- Page: All Dates -->
   <div id="page-all" class="page px-5">
     <div class="relative mb-3">
       <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm" style="color:var(--muted);"></i>
@@ -228,7 +231,6 @@ textarea { resize: vertical; min-height: 80px; }
     <div id="all-list"></div>
   </div>
 
-  <!-- Page: Settings -->
   <div id="page-settings" class="page px-5">
     <h2 class="text-lg font-bold mb-4">Settings</h2>
     <div class="flex flex-col gap-3">
@@ -262,13 +264,12 @@ textarea { resize: vertical; min-height: 80px; }
         <p class="text-xs mt-0.5" style="color:var(--muted);">Permanently delete all saved events</p>
       </button>
       <div class="event-card" style="border-color:transparent;background:transparent;">
-        <p class="text-xs" style="color:var(--muted);">WhatsApp wishes open the WhatsApp app/web with a pre-filled message. You tap Send — we never access your account.</p>
+        <p class="text-xs" style="color:var(--muted);">WhatsApp and SMS wishes open the respective app with a pre-filled message. You tap Send — we never access your accounts.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bottom Nav -->
 <nav class="bottom-nav max-w-lg mx-auto">
   <button class="nav-item active" data-page="upcoming" onclick="navigate('upcoming',this)">
     <i class="fa-solid fa-clock"></i><span>Upcoming</span>
@@ -316,8 +317,8 @@ textarea { resize: vertical; min-height: 80px; }
         <input type="text" id="f-contact" placeholder="e.g. Mom">
       </div>
       <div>
-        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">PHONE NUMBER <span style="color:var(--border);">(for WhatsApp)</span></label>
-        <input type="tel" id="f-phone" placeholder="e.g. +1234567890" inputmode="tel">
+        <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">PHONE NUMBER <span style="color:var(--border);">(with country code, e.g. +91...)</span></label>
+        <input type="tel" id="f-phone" placeholder="e.g. +919876543210" inputmode="tel">
       </div>
       <div>
         <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">MESSAGE TEMPLATE</label>
@@ -331,7 +332,8 @@ textarea { resize: vertical; min-height: 80px; }
       </div>
       <div>
         <label class="text-xs font-semibold mb-1.5 block" style="color:var(--muted);">MESSAGE <span style="color:var(--border);">(tap emojis to add)</span></label>
-        <textarea id="f-message" rows="3" placeholder="Your wish message..."></textarea>
+        <textarea id="f-message" rows="3" placeholder="Your wish message..." oninput="updateFormCharCount()"></textarea>
+        <div class="char-counter char-ok" id="form-char-counter">0 / 160</div>
         <div class="emoji-bar mt-2" id="emoji-bar"></div>
       </div>
       <div>
@@ -359,15 +361,22 @@ textarea { resize: vertical; min-height: 80px; }
       <button class="btn-icon btn-secondary" onclick="closeModal('modal-message')"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div id="msg-preview-area" class="mb-4"></div>
-    <div class="flex gap-3">
+    <div class="flex gap-2">
       <button class="btn btn-whatsapp flex-1 justify-center" onclick="openWhatsApp()" style="padding:13px;">
-        <i class="fa-brands fa-whatsapp text-lg"></i> Open in WhatsApp
+        <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp
+      </button>
+      <button class="btn btn-sms flex-1 justify-center" onclick="openSMS()" style="padding:13px;">
+        <i class="fa-solid fa-comment-sms text-lg"></i> SMS
       </button>
       <button class="btn btn-secondary" onclick="copyMessage()" title="Copy message">
         <i class="fa-regular fa-copy"></i>
       </button>
     </div>
-    <p class="text-[11px] mt-3 text-center" style="color:var(--muted);">WhatsApp will open with your message pre-filled. Just tap Send.</p>
+    <div id="sms-warning" class="hidden mt-3 p-3 rounded-lg text-xs leading-relaxed" style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.2);color:var(--sms-blue);">
+      <i class="fa-solid fa-circle-info mr-1"></i>
+      SMS has a 160-character limit. Your message will be truncated if longer. Emojis may not display on some carriers — WhatsApp is recommended for emojis.
+    </div>
+    <p class="text-[11px] mt-3 text-center" style="color:var(--muted);">Opens the app with your message pre-filled. Just tap Send.</p>
   </div>
 </div>
 
@@ -382,15 +391,12 @@ textarea { resize: vertical; min-height: 80px; }
   </div>
 </div>
 
-<!-- Toasts -->
 <div class="toast-container" id="toasts"></div>
 
 <script>
-/* ============================
-   Constants & Configuration
-   ============================ */
 const STORAGE_KEY = 'specialdays_events';
 const SETTINGS_KEY = 'specialdays_settings';
+const SMS_LIMIT = 160;
 
 const CATEGORIES = {
   birthday: { label: 'Birthday', icon: 'fa-cake-candles', color: 'var(--accent)' },
@@ -407,7 +413,7 @@ const TEMPLATES = {
 };
 
 const EMOJI_SETS = {
-  birthday: ['🎂','🎉','🎈','🥳','🎁','🎊','🍰','🎵','🌟','❤️','🥂','💐'],
+  birthday: ['🎂','🎉','��','🥳','🎁','🎊','🍰','🎵','🌟','❤️','🥂','💐'],
   anniversary: ['💕','🌹','🥂','❤️','💍','💐','🕯️','✨','🥰','💫','🍷','🫶'],
   congrats: ['🎊','👏','🌟','🎯','🏆','💪','🎉','✨','🥳','🔥','💐','👏'],
   thankyou: ['🙏','💖','🌸','😊','🤗','💝','🌟','❤️','💐','🫶','✨','🌺'],
@@ -417,81 +423,57 @@ const EMOJI_SETS = {
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS_SHORT = ['Mo','Tu','We','Th','Fr','Sa','Su'];
 
-/* ============================
-   App State
-   ============================ */
 let currentPage = 'upcoming';
 let currentFilter = 'all';
 let calYear, calMonth, calSelectedDate = null;
 let currentMsgEvent = null;
 let settings = { notifEnabled: false, soundEnabled: true };
 
-/* ============================
-   Data Layer
-   ============================ */
+/* ==================== Data Layer ==================== */
 function getEvents() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
   catch { return []; }
 }
-
-function saveEvents(events) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-}
-
+function saveEvents(events) { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); }
 function saveEvent(ev, silent) {
   const events = getEvents();
   const idx = events.findIndex(e => e.id === ev.id);
-  if (idx >= 0) events[idx] = ev;
-  else events.push(ev);
+  if (idx >= 0) events[idx] = ev; else events.push(ev);
   saveEvents(events);
   if (!silent) { renderCurrentPage(); showToast('Event saved', 'success'); }
 }
-
 function deleteEvent(id) {
   saveEvents(getEvents().filter(e => e.id !== id));
   renderCurrentPage();
   showToast('Event deleted', 'info');
 }
-
 function loadSettings() {
   try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch {}
   document.getElementById('toggle-notif').checked = settings.notifEnabled;
   document.getElementById('toggle-sound').checked = settings.soundEnabled;
 }
+function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
 
-function saveSettings() {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-}
-
-/* ============================
-   Date Utilities
-   ============================ */
+/* ==================== Date Utilities ==================== */
 function isLeapYear(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
-
 function getNextOccurrence(dateStr) {
   const orig = new Date(dateStr + 'T00:00:00');
   const m = orig.getMonth(), d = orig.getDate();
   const now = new Date(); now.setHours(0,0,0,0);
   let next = new Date(now.getFullYear(), m, d);
   if (next < now) next = new Date(now.getFullYear() + 1, m, d);
-  // Handle Feb 29 on non-leap years
-  if (m === 1 && d === 29 && !isLeapYear(next.getFullYear())) {
-    next = new Date(next.getFullYear(), 1, 28);
-  }
+  if (m === 1 && d === 29 && !isLeapYear(next.getFullYear())) next = new Date(next.getFullYear(), 1, 28);
   return next;
 }
-
 function getDaysUntil(ev) {
   const next = getNextOccurrence(ev.date);
   const now = new Date(); now.setHours(0,0,0,0);
   return Math.ceil((next - now) / 86400000);
 }
-
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
   return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
 }
-
 function formatCountdown(days) {
   if (days === 0) return { text: 'TODAY', cls: 'countdown-today' };
   if (days === 1) return { text: 'Tomorrow', cls: 'countdown-soon' };
@@ -500,51 +482,54 @@ function formatCountdown(days) {
   const m = Math.floor(days / 30), d = days % 30;
   return { text: d ? `${m}m ${d}d` : `${m} months`, cls: 'countdown-far' };
 }
-
 function todayStr() {
   const n = new Date();
   return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
 }
-
 function getEventsForDate(dateStr) {
-  // Check if any event's next occurrence matches this date
   return getEvents().filter(ev => {
     const next = getNextOccurrence(ev.date);
     const ds = `${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}-${String(next.getDate()).padStart(2,'0')}`;
     return ds === dateStr;
   });
 }
-
 function getSortedEvents() {
   return getEvents().map(ev => ({ ...ev, daysUntil: getDaysUntil(ev) })).sort((a, b) => a.daysUntil - b.daysUntil);
 }
 
-/* ============================
-   Reminder System
-   ============================ */
+/* ==================== Character Counter ==================== */
+function getCharClass(len) {
+  if (len <= SMS_LIMIT) return 'char-ok';
+  if (len <= SMS_LIMIT + 20) return 'char-warn';
+  return 'char-over';
+}
+function updateFormCharCount() {
+  const len = document.getElementById('f-message').value.length;
+  const el = document.getElementById('form-char-counter');
+  el.textContent = `${len} / ${SMS_LIMIT}`;
+  el.className = `char-counter ${getCharClass(len)}`;
+}
+function renderMsgCharCount(msg) {
+  const len = msg.length;
+  const cls = len <= SMS_LIMIT ? 'char-ok' : 'char-over';
+  return `<div class="char-counter ${cls}">${len} / ${SMS_LIMIT} chars${len > SMS_LIMIT ? ' (will truncate for SMS)' : ''}</div>`;
+}
+
+/* ==================== Reminder System ==================== */
 function checkReminders() {
   const events = getEvents();
-  const now = new Date();
   let notified = 0;
-
   events.forEach(ev => {
     const days = getDaysUntil(ev);
     if (days <= ev.remindBefore && days >= 0) {
       const nextYear = getNextOccurrence(ev.date).getFullYear();
-      if (ev.remindSentYear === nextYear) return; // Already sent for this occurrence
-
-      // Mark as sent
+      if (ev.remindSentYear === nextYear) return;
       ev.remindSentYear = nextYear;
       const allEv = getEvents();
       const idx = allEv.findIndex(e => e.id === ev.id);
       if (idx >= 0) { allEv[idx] = ev; saveEvents(allEv); }
-
-      // Show notification
       const cd = formatCountdown(days);
-      const msg = days === 0
-        ? `${ev.name} is TODAY!`
-        : `${ev.name} is in ${cd.text}`;
-
+      const msg = days === 0 ? `${ev.name} is TODAY!` : `${ev.name} is in ${cd.text}`;
       if (settings.notifEnabled && 'Notification' in window && Notification.permission === 'granted') {
         new Notification('Special Days Reminder', { body: msg, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎉</text></svg>' });
       }
@@ -553,8 +538,6 @@ function checkReminders() {
       notified++;
     }
   });
-
-  // Reset remindSentYear for past occurrences (allow re-remind next year)
   events.forEach(ev => {
     const next = getNextOccurrence(ev.date);
     if (ev.remindSentYear && ev.remindSentYear < next.getFullYear()) {
@@ -564,57 +547,42 @@ function checkReminders() {
       if (idx >= 0) { allEv[idx] = ev; saveEvents(allEv); }
     }
   });
-
   if (notified > 0) updateHeaderSubtitle();
 }
-
 function requestNotifPermission() {
   if (!('Notification' in window)) { showToast('Notifications not supported in this browser', 'error'); return; }
   if (Notification.permission === 'granted') { showToast('Notifications already enabled', 'info'); return; }
   Notification.requestPermission().then(p => {
     if (p === 'granted') {
-      settings.notifEnabled = true;
-      saveSettings();
+      settings.notifEnabled = true; saveSettings();
       document.getElementById('toggle-notif').checked = true;
       showToast('Notifications enabled', 'success');
-    } else {
-      showToast('Notification permission denied', 'error');
-    }
+    } else { showToast('Notification permission denied', 'error'); }
   });
 }
-
 function toggleNotif(val) {
   if (val && 'Notification' in window && Notification.permission !== 'granted') {
     Notification.requestPermission().then(p => {
       if (p !== 'granted') {
         document.getElementById('toggle-notif').checked = false;
         settings.notifEnabled = false;
-        showToast('Permission denied', 'error');
-        return;
+        showToast('Permission denied', 'error'); return;
       }
-      settings.notifEnabled = true;
-      saveSettings();
+      settings.notifEnabled = true; saveSettings();
       showToast('Notifications enabled', 'success');
     });
-  } else {
-    settings.notifEnabled = val;
-    saveSettings();
-  }
+  } else { settings.notifEnabled = val; saveSettings(); }
 }
-
 function toggleSound(val) { settings.soundEnabled = val; saveSettings(); }
 
-/* ============================
-   Sound & Effects
-   ============================ */
+/* ==================== Sound & Effects ==================== */
 function playChime() {
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     [660, 880, 1100].forEach((freq, i) => {
       const osc = ac.createOscillator();
       const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
+      osc.type = 'sine'; osc.frequency.value = freq;
       osc.connect(gain); gain.connect(ac.destination);
       gain.gain.setValueAtTime(0.12, ac.currentTime + i * 0.1);
       gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + i * 0.1 + 0.35);
@@ -623,7 +591,6 @@ function playChime() {
     });
   } catch(e) {}
 }
-
 function burstConfetti(x, y) {
   const colors = ['#e8a030','#e8506a','#34c770','#5ba8e8','#9b6dff','#ec4899','#fbbf24'];
   for (let i = 0; i < 35; i++) {
@@ -639,9 +606,7 @@ function burstConfetti(x, y) {
   }
 }
 
-/* ============================
-   Toast System
-   ============================ */
+/* ==================== Toast System ==================== */
 function showToast(msg, type = 'info') {
   const container = document.getElementById('toasts');
   const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
@@ -652,19 +617,15 @@ function showToast(msg, type = 'info') {
   setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
-/* ============================
-   Rendering: Upcoming
-   ============================ */
+/* ==================== Rendering: Upcoming ==================== */
 function renderUpcoming() {
   const list = document.getElementById('upcoming-list');
   const sorted = getSortedEvents().filter(e => e.daysUntil <= 90);
   const next30 = sorted.filter(e => e.daysUntil <= 30);
-
   if (sorted.length === 0) {
     list.innerHTML = `<div class="empty-state"><i class="fa-regular fa-calendar-plus block"></i><p>No special days saved yet.<br>Tap <strong>+</strong> to add your first one!</p></div>`;
     return;
   }
-
   let html = '';
   if (next30.length > 0) {
     html += `<p class="text-xs font-semibold mb-3" style="color:var(--muted);letter-spacing:0.5px;">COMING UP</p>`;
@@ -684,8 +645,7 @@ function renderEventCard(ev, idx) {
   const nextOcc = getNextOccurrence(ev.date);
   const sentThisYear = ev.lastSentYear === nextOcc.getFullYear();
   const hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g, '').length >= 8;
-
-  return `<div class="event-card mb-3" style="animation-delay:${idx*50}ms;animation:slideUp 0.3s ease ${idx*50}ms both;">
+  return `<div class="event-card mb-3" style="animation:slideUp 0.3s ease ${idx*50}ms both;">
     <div class="flex items-start justify-between gap-3">
       <div class="flex items-start gap-3 flex-1 min-w-0">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 cat-${ev.category}">
@@ -706,7 +666,7 @@ function renderEventCard(ev, idx) {
       </div>
     </div>
     <div class="flex gap-2 mt-3">
-      ${hasPhone ? `<button class="btn btn-whatsapp btn-sm" onclick="openMsgModal('${ev.id}',event)"><i class="fa-brands fa-whatsapp"></i> Send Wish</button>` : `<button class="btn btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Add phone number"><i class="fa-solid fa-phone"></i> Add Phone</button>`}
+      ${hasPhone ? `<button class="btn btn-whatsapp btn-sm" onclick="openMsgModal('${ev.id}',event)"><i class="fa-brands fa-whatsapp"></i> Send</button>` : `<button class="btn btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Add phone number"><i class="fa-solid fa-phone"></i> Add Phone</button>`}
       <div class="flex-1"></div>
       <button class="btn-icon btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
       <button class="btn-icon btn-danger btn-sm" onclick="confirmDelete('${ev.id}')" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>
@@ -719,22 +679,18 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ============================
-   Rendering: Calendar
-   ============================ */
+/* ==================== Rendering: Calendar ==================== */
 function renderCalendar() {
   document.getElementById('cal-title').textContent = `${MONTHS[calMonth]} ${calYear}`;
   const grid = document.getElementById('cal-grid');
   const firstDay = new Date(calYear, calMonth, 1);
   const lastDay = new Date(calYear, calMonth + 1, 0);
-  const startDow = (firstDay.getDay() + 6) % 7; // Monday = 0
+  const startDow = (firstDay.getDay() + 6) % 7;
   const daysInMonth = lastDay.getDate();
   const td = todayStr();
-
   let html = '<div class="grid grid-cols-7 gap-1 mb-1">';
   DAYS_SHORT.forEach(d => { html += `<div class="text-center text-[11px] font-semibold py-1" style="color:var(--muted);">${d}</div>`; });
   html += '</div><div class="grid grid-cols-7 gap-1">';
-
   for (let i = 0; i < startDow; i++) html += '<div></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -748,18 +704,13 @@ function renderCalendar() {
   }
   html += '</div>';
   grid.innerHTML = html;
-
   renderCalEvents();
 }
-
 function renderCalEvents() {
   const area = document.getElementById('cal-events');
   if (!calSelectedDate) { area.innerHTML = ''; return; }
   const evts = getEventsForDate(calSelectedDate);
-  if (!evts.length) {
-    area.innerHTML = `<p class="text-sm text-center py-4" style="color:var(--muted);">No events on this date</p>`;
-    return;
-  }
+  if (!evts.length) { area.innerHTML = `<p class="text-sm text-center py-4" style="color:var(--muted);">No events on this date</p>`; return; }
   const d = new Date(calSelectedDate + 'T00:00:00');
   area.innerHTML = `<p class="text-xs font-semibold mb-2" style="color:var(--muted);">${MONTHS[d.getMonth()]} ${d.getDate()}</p>` +
     evts.map(ev => {
@@ -777,7 +728,6 @@ function renderCalEvents() {
       </div>`;
     }).join('');
 }
-
 function calNav(dir) {
   calMonth += dir;
   if (calMonth > 11) { calMonth = 0; calYear++; }
@@ -785,15 +735,12 @@ function calNav(dir) {
   calSelectedDate = null;
   renderCalendar();
 }
-
 function selectCalDate(ds) {
   calSelectedDate = calSelectedDate === ds ? null : ds;
   renderCalendar();
 }
 
-/* ============================
-   Rendering: All Dates
-   ============================ */
+/* ==================== Rendering: All Dates ==================== */
 function renderAll() {
   const list = document.getElementById('all-list');
   const query = document.getElementById('search-input').value.toLowerCase().trim();
@@ -804,15 +751,12 @@ function renderAll() {
     (e.contactName && e.contactName.toLowerCase().includes(query)) ||
     (e.phone && e.phone.includes(query))
   );
-
   if (!events.length) {
     list.innerHTML = `<div class="empty-state"><i class="fa-solid fa-magnifying-glass block"></i><p>${query ? 'No events match your search.' : 'No events in this category.'}</p></div>`;
     return;
   }
-
   list.innerHTML = events.map((ev, i) => renderEventCard(ev, i)).join('');
 }
-
 function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('#filter-cats .seg-btn').forEach(b => b.classList.remove('active'));
@@ -820,13 +764,9 @@ function setFilter(f, btn) {
   renderAll();
 }
 
-/* ============================
-   Modals
-   ============================ */
+/* ==================== Modals ==================== */
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
 });
@@ -840,7 +780,7 @@ function openAddModal(editId) {
   setCat('birthday', document.querySelector('#f-cat-seg [data-val="birthday"]'));
   setRemind(3, document.querySelector('#f-remind-seg [data-val="3"]'));
   renderEmojiBar('birthday');
-
+  updateFormCharCount();
   if (editId) {
     const ev = getEvents().find(e => e.id === editId);
     if (ev) {
@@ -855,7 +795,7 @@ function openAddModal(editId) {
       setCat(ev.category || 'birthday', document.querySelector(`#f-cat-seg [data-val="${ev.category||'birthday'}"]`));
       setRemind(ev.remindBefore ?? 3, document.querySelector(`#f-remind-seg [data-val="${ev.remindBefore??3}"]`));
       renderEmojiBar(ev.category || 'birthday');
-      // Auto-select matching template
+      updateFormCharCount();
       const tplSelect = document.getElementById('f-template');
       if (ev.message) {
         let matched = false;
@@ -872,7 +812,6 @@ function openAddModal(editId) {
     document.getElementById('form-submit-text').textContent = 'Save Event';
     applyTemplate();
   }
-
   openModal('modal-add');
 }
 
@@ -881,33 +820,27 @@ function setCat(val, btn) {
   document.querySelectorAll('#f-cat-seg .seg-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderEmojiBar(val);
-  // Auto-switch template to match category
-  if (val === 'birthday' || val === 'anniversary') {
-    document.getElementById('f-template').value = val;
-  }
+  if (val === 'birthday' || val === 'anniversary') document.getElementById('f-template').value = val;
   applyTemplate();
 }
-
 function setRemind(val, btn) {
   document.getElementById('f-remind').value = val;
   document.querySelectorAll('#f-remind-seg .seg-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 }
-
 function renderEmojiBar(category) {
   const bar = document.getElementById('emoji-bar');
   const emojis = EMOJI_SETS[category] || EMOJI_SETS.custom;
   bar.innerHTML = emojis.map(e => `<button type="button" class="emoji-btn" onclick="insertEmoji('${e}')">${e}</button>`).join('');
 }
-
 function insertEmoji(emoji) {
   const ta = document.getElementById('f-message');
   const start = ta.selectionStart, end = ta.selectionEnd;
   ta.value = ta.value.substring(0, start) + emoji + ta.value.substring(end);
   ta.selectionStart = ta.selectionEnd = start + emoji.length;
   ta.focus();
+  updateFormCharCount();
 }
-
 function applyTemplate() {
   const key = document.getElementById('f-template').value;
   const name = document.getElementById('f-contact').value || document.getElementById('f-name').value || 'there';
@@ -915,48 +848,41 @@ function applyTemplate() {
   if (key !== 'custom' && !document.getElementById('f-message').value) {
     document.getElementById('f-message').value = tpl.replace('{name}', name);
   }
+  updateFormCharCount();
 }
-
 function handleFormSubmit(e) {
   e.preventDefault();
   const id = document.getElementById('f-id').value;
-  const contactName = document.getElementById('f-contact').value.trim();
-  const name = document.getElementById('f-name').value.trim();
-  const phone = document.getElementById('f-phone').value.trim();
-
   const ev = {
     id: id || 'ev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-    name,
+    name: document.getElementById('f-name').value.trim(),
     date: document.getElementById('f-date').value,
     category: document.getElementById('f-category').value,
-    contactName,
-    phone,
+    contactName: document.getElementById('f-contact').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
     message: document.getElementById('f-message').value.trim(),
     remindBefore: parseInt(document.getElementById('f-remind').value),
     remindSentYear: null,
     lastSentYear: id ? (getEvents().find(e2 => e2.id === id)?.lastSentYear || null) : null,
     createdAt: id ? (getEvents().find(e2 => e2.id === id)?.createdAt || new Date().toISOString()) : new Date().toISOString()
   };
-
   saveEvent(ev);
   closeModal('modal-add');
 }
 
-/* ============================
-   WhatsApp Message Modal
-   ============================ */
+/* ==================== WhatsApp & SMS Send ==================== */
+function getResolvedMessage(ev) {
+  const name = ev.contactName || ev.name;
+  return (ev.message || '').replace(/\{name\}/g, name);
+}
+
 function openMsgModal(evId, evt) {
   const ev = getEvents().find(e => e.id === evId);
   if (!ev) return;
   currentMsgEvent = ev;
-
-  const name = ev.contactName || ev.name;
-  let msg = ev.message || '';
-  msg = msg.replace(/\{name\}/g, name);
-
-  const area = document.getElementById('msg-preview-area');
+  const msg = getResolvedMessage(ev);
   const cat = CATEGORIES[ev.category] || CATEGORIES.custom;
-
+  const area = document.getElementById('msg-preview-area');
   area.innerHTML = `
     <div class="flex items-center gap-3 mb-4">
       <div class="w-10 h-10 rounded-xl flex items-center justify-center cat-${ev.category}">
@@ -970,10 +896,13 @@ function openMsgModal(evId, evt) {
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;">
       <p class="text-sm leading-relaxed whitespace-pre-wrap">${escHtml(msg) || '<span style="color:var(--muted);">No message set. Edit the event to add one.</span>'}</p>
     </div>
+    ${msg ? renderMsgCharCount(msg) : ''}
     <div class="emoji-bar mt-3">
-      ${(['❤️','🎉','🎂','🌟','🎈','🥳','🌹','💫','✨','🥂','💕','🎁']).map(e => `<button type="button" class="emoji-btn" onclick="appendMsgEmoji('${e}')">${e}</button>`).join('')}
+      ${['❤️','🎉','🎂','🌟','🎈','🥳','🌹','💫','✨','🥂','💕','🎁'].map(e => `<button type="button" class="emoji-btn" onclick="appendMsgEmoji('${e}')">${e}</button>`).join('')}
     </div>`;
-
+  // Show SMS warning if message is long
+  const smsWarn = document.getElementById('sms-warning');
+  if (msg && msg.length > SMS_LIMIT) { smsWarn.classList.remove('hidden'); } else { smsWarn.classList.add('hidden'); }
   openModal('modal-message');
 }
 
@@ -981,54 +910,70 @@ function appendMsgEmoji(emoji) {
   if (!currentMsgEvent) return;
   currentMsgEvent.message = (currentMsgEvent.message || '') + emoji;
   saveEvent(currentMsgEvent, true);
-  // Re-render preview
   const preview = document.querySelector('#msg-preview-area .whitespace-pre-wrap');
-  if (preview) preview.textContent = currentMsgEvent.message.replace(/\{name\}/g, currentMsgEvent.contactName || currentMsgEvent.name);
+  if (preview) preview.textContent = getResolvedMessage(currentMsgEvent);
+  const counter = document.querySelector('#msg-preview-area .char-counter');
+  if (counter) {
+    const msg = getResolvedMessage(currentMsgEvent);
+    counter.outerHTML = renderMsgCharCount(msg);
+  }
+  const smsWarn = document.getElementById('sms-warning');
+  if (msg && msg.length > SMS_LIMIT) { smsWarn.classList.remove('hidden'); } else { smsWarn.classList.add('hidden'); }
+}
+
+function markAsSent() {
+  if (!currentMsgEvent) return;
+  const nextYear = getNextOccurrence(currentMsgEvent.date).getFullYear();
+  currentMsgEvent.lastSentYear = nextYear;
+  saveEvent(currentMsgEvent, true);
 }
 
 function openWhatsApp() {
   if (!currentMsgEvent || !currentMsgEvent.phone) {
-    showToast('No phone number set for this event', 'error');
-    return;
+    showToast('No phone number set for this event', 'error'); return;
   }
-  const name = currentMsgEvent.contactName || currentMsgEvent.name;
-  let msg = (currentMsgEvent.message || '').replace(/\{name\}/g, name);
+  const msg = getResolvedMessage(currentMsgEvent);
   const phone = currentMsgEvent.phone.replace(/[^0-9+]/g, '');
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-
-  // Mark as sent
-  const nextYear = getNextOccurrence(currentMsgEvent.date).getFullYear();
-  currentMsgEvent.lastSentYear = nextYear;
-  saveEvent(currentMsgEvent, true);
-
+  markAsSent();
   window.open(url, '_blank');
-
-  // Confetti from the button position
   const btn = document.querySelector('.btn-whatsapp');
-  if (btn) {
-    const rect = btn.getBoundingClientRect();
-    burstConfetti(rect.left + rect.width / 2, rect.top);
-  }
-
+  if (btn) { const r = btn.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
   if (settings.soundEnabled) playChime();
   closeModal('modal-message');
   setTimeout(() => { renderCurrentPage(); showToast('Opened WhatsApp — just tap Send!', 'success'); }, 300);
 }
 
-function copyMessage() {
-  if (!currentMsgEvent) return;
-  const name = currentMsgEvent.contactName || currentMsgEvent.name;
-  const msg = (currentMsgEvent.message || '').replace(/\{name\}/g, name);
-  navigator.clipboard.writeText(msg).then(() => {
-    showToast('Message copied to clipboard', 'success');
-  }).catch(() => {
-    showToast('Failed to copy', 'error');
-  });
+function openSMS() {
+  if (!currentMsgEvent || !currentMsgEvent.phone) {
+    showToast('No phone number set for this event', 'error'); return;
+  }
+  let msg = getResolvedMessage(currentMsgEvent);
+  // Truncate for SMS limit
+  if (msg.length > SMS_LIMIT) {
+    msg = msg.substring(0, SMS_LIMIT - 3) + '...';
+    showToast(`Message truncated to ${SMS_LIMIT} characters for SMS`, 'info');
+  }
+  const phone = currentMsgEvent.phone.replace(/[^0-9+]/g, '');
+  const url = `sms:${phone}?body=${encodeURIComponent(msg)}`;
+  markAsSent();
+  window.location.href = url;
+  const btn = document.querySelector('.btn-sms');
+  if (btn) { const r = btn.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
+  if (settings.soundEnabled) playChime();
+  closeModal('modal-message');
+  setTimeout(() => { renderCurrentPage(); showToast('Opened Messages — just tap Send!', 'success'); }, 500);
 }
 
-/* ============================
-   Confirm Actions
-   ============================ */
+function copyMessage() {
+  if (!currentMsgEvent) return;
+  const msg = getResolvedMessage(currentMsgEvent);
+  navigator.clipboard.writeText(msg).then(() => {
+    showToast('Message copied to clipboard', 'success');
+  }).catch(() => { showToast('Failed to copy', 'error'); });
+}
+
+/* ==================== Confirm Actions ==================== */
 function confirmDelete(id) {
   const ev = getEvents().find(e => e.id === id);
   if (!ev) return;
@@ -1038,7 +983,6 @@ function confirmDelete(id) {
   btn.onclick = () => { deleteEvent(id); closeModal('modal-confirm'); };
   openModal('modal-confirm');
 }
-
 function confirmClearAll() {
   const events = getEvents();
   if (!events.length) { showToast('No events to clear', 'info'); return; }
@@ -1049,9 +993,7 @@ function confirmClearAll() {
   openModal('modal-confirm');
 }
 
-/* ============================
-   Navigation
-   ============================ */
+/* ==================== Navigation ==================== */
 function navigate(page, btn) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1060,7 +1002,6 @@ function navigate(page, btn) {
   if (btn) btn.classList.add('active');
   renderCurrentPage();
 }
-
 function renderCurrentPage() {
   switch (currentPage) {
     case 'upcoming': renderUpcoming(); break;
@@ -1069,7 +1010,6 @@ function renderCurrentPage() {
   }
   updateHeaderSubtitle();
 }
-
 function updateHeaderSubtitle() {
   const el = document.getElementById('header-subtitle');
   const sorted = getSortedEvents();
@@ -1084,36 +1024,24 @@ function updateHeaderSubtitle() {
     el.textContent = 'Never miss a moment';
     el.style.color = 'var(--muted)';
   }
-
-  // Update notification badge
   const upcoming = sorted.filter(e => e.daysUntil <= 1 && e.daysUntil >= 0);
   const badge = document.getElementById('notif-badge');
-  if (upcoming.length) {
-    badge.textContent = upcoming.length;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
+  if (upcoming.length) { badge.textContent = upcoming.length; badge.classList.remove('hidden'); }
+  else { badge.classList.add('hidden'); }
 }
 
-/* ============================
-   Import / Export
-   ============================ */
+/* ==================== Import / Export ==================== */
 function exportData() {
   const events = getEvents();
   if (!events.length) { showToast('No events to export', 'info'); return; }
   const blob = new Blob([JSON.stringify(events, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `special-days-backup-${todayStr()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = `special-days-backup-${todayStr()}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
   showToast(`Exported ${events.length} events`, 'success');
 }
-
 function importData(file) {
   if (!file) return;
   const reader = new FileReader();
@@ -1125,68 +1053,50 @@ function importData(file) {
       const existing = getEvents();
       data.forEach(ev => {
         if (ev.name && ev.date) {
-          // Assign new ID to avoid conflicts
           ev.id = 'ev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6) + count;
-          ev.remindSentYear = null;
-          ev.lastSentYear = null;
-          existing.push(ev);
-          count++;
+          ev.remindSentYear = null; ev.lastSentYear = null;
+          existing.push(ev); count++;
         }
       });
       saveEvents(existing);
       renderCurrentPage();
       showToast(`Imported ${count} events`, 'success');
-    } catch (err) {
-      showToast('Invalid file format. Expected a JSON array of events.', 'error');
-    }
+    } catch (err) { showToast('Invalid file format. Expected a JSON array of events.', 'error'); }
   };
   reader.readAsText(file);
 }
 
-/* ============================
-   Contact name → template auto-fill
-   ============================ */
+/* ==================== Auto-fill contact name ==================== */
 document.getElementById('f-contact').addEventListener('input', () => {
   const tplKey = document.getElementById('f-template').value;
   if (tplKey !== 'custom') {
     const name = document.getElementById('f-contact').value.trim() || document.getElementById('f-name').value.trim() || 'there';
     document.getElementById('f-message').value = (TEMPLATES[tplKey] || '').replace('{name}', name);
+    updateFormCharCount();
   }
 });
 
-/* ============================
-   Initialization
-   ============================ */
+/* ==================== Init ==================== */
 function init() {
   loadSettings();
   const now = new Date();
   calYear = now.getFullYear();
   calMonth = now.getMonth();
-
-  // Seed demo data if first visit
   if (!localStorage.getItem(STORAGE_KEY)) {
     const demoEvents = [
-      { id:'demo_1', name:"Mom's Birthday", date:'1965-03-15', category:'birthday', contactName:'Mom', phone:'+1 555 0123', message:'Mom, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🎂❤️', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_2', name:"Wedding Anniversary", date:'2020-06-22', category:'anniversary', contactName:'Sweetheart', phone:'+1 555 0456', message:'Sweetheart, Happy Anniversary! Cheers to another beautiful year of wonderful memories together! 🥂💕', remindBefore:1, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_3', name:"Dad's Birthday", date:'1960-08-09', category:'birthday', contactName:'Dad', phone:'+1 555 0789', message:'Dad, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🎉🌟', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_4', name:"Best Friend's Birthday", date:'1995-12-03', category:'birthday', contactName:'Alex', phone:'+1 555 0321', message:'Alex, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🥳🎈', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
-      { id:'demo_5', name:"Graduation Day", date:'2025-05-15', category:'custom', contactName:'Sarah', phone:'+1 555 0654', message:'Sarah, Congratulations! So proud of you! Here\'s to many more amazing achievements! 🎊🏆', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_1', name:"Mom's Birthday", date:'1965-03-15', category:'birthday', contactName:'Mom', phone:'+91 98765 43210', message:'Mom, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🎂❤️', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_2', name:"Wedding Anniversary", date:'2020-06-22', category:'anniversary', contactName:'Sweetheart', phone:'+91 87654 32109', message:'Sweetheart, Happy Anniversary! Cheers to another beautiful year of wonderful memories together! 🥂💕', remindBefore:1, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_3', name:"Dad's Birthday", date:'1960-08-09', category:'birthday', contactName:'Dad', phone:'+91 76543 21098', message:'Dad, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🎉🌟', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_4', name:"Best Friend's Birthday", date:'1995-12-03', category:'birthday', contactName:'Alex', phone:'+91 65432 10987', message:'Alex, Happy Birthday! Wishing you a day filled with love, laughter, and all your favorite things! 🥳🎈', remindBefore:3, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
+      { id:'demo_5', name:"Graduation Day", date:'2025-05-15', category:'custom', contactName:'Sarah', phone:'+91 54321 09876', message:'Sarah, Congratulations! So proud of you! Here\'s to many more amazing achievements! 🎊🏆', remindBefore:7, remindSentYear:null, lastSentYear:null, createdAt:new Date().toISOString() },
     ];
     saveEvents(demoEvents);
   }
-
   renderCurrentPage();
-
-  // Check reminders every 30 seconds
   checkReminders();
   setInterval(checkReminders, 30000);
-
-  // Update countdowns every minute
-  setInterval(() => {
-    if (currentPage === 'upcoming' || currentPage === 'all') renderCurrentPage();
-  }, 60000);
+  setInterval(() => { if (currentPage === 'upcoming' || currentPage === 'all') renderCurrentPage(); }, 60000);
 }
-
 init();
 </script>
 </body>
