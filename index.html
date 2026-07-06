@@ -157,6 +157,7 @@ textarea { resize: vertical; min-height: 80px; }
 .btn-sms { background: var(--sms-blue); color: #fff; }
 .btn-sms:hover { background: #1976D2; }
 .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+.btn-xs { padding: 6px 10px; font-size: 12px; border-radius: 7px; gap: 5px; }
 .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 8px; }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
@@ -264,7 +265,7 @@ textarea { resize: vertical; min-height: 80px; }
         <p class="text-xs mt-0.5" style="color:var(--muted);">Permanently delete all saved events</p>
       </button>
       <div class="event-card" style="border-color:transparent;background:transparent;">
-        <p class="text-xs" style="color:var(--muted);">WhatsApp and SMS wishes open the respective app with a pre-filled message. You tap Send — we never access your accounts.</p>
+        <p class="text-xs" style="color:var(--muted);">WhatsApp and SMS buttons open the respective app with a pre-filled message. You tap Send — we never access your accounts.</p>
       </div>
     </div>
   </div>
@@ -353,33 +354,6 @@ textarea { resize: vertical; min-height: 80px; }
   </div>
 </div>
 
-<!-- Modal: Send Message -->
-<div class="modal-overlay" id="modal-message">
-  <div class="modal-box">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold">Send Your Wish</h2>
-      <button class="btn-icon btn-secondary" onclick="closeModal('modal-message')"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div id="msg-preview-area" class="mb-4"></div>
-    <div class="flex gap-2">
-      <button class="btn btn-whatsapp flex-1 justify-center" onclick="openWhatsApp()" style="padding:13px;">
-        <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp
-      </button>
-      <button class="btn btn-sms flex-1 justify-center" onclick="openSMS()" style="padding:13px;">
-        <i class="fa-solid fa-comment-sms text-lg"></i> SMS
-      </button>
-      <button class="btn btn-secondary" onclick="copyMessage()" title="Copy message">
-        <i class="fa-regular fa-copy"></i>
-      </button>
-    </div>
-    <div id="sms-warning" class="hidden mt-3 p-3 rounded-lg text-xs leading-relaxed" style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.2);color:var(--sms-blue);">
-      <i class="fa-solid fa-circle-info mr-1"></i>
-      SMS has a 160-character limit. Your message will be truncated if longer. Emojis may not display on some carriers — WhatsApp is recommended for emojis.
-    </div>
-    <p class="text-[11px] mt-3 text-center" style="color:var(--muted);">Opens the app with your message pre-filled. Just tap Send.</p>
-  </div>
-</div>
-
 <!-- Modal: Confirm -->
 <div class="modal-overlay" id="modal-confirm">
   <div class="modal-box" style="max-width:360px;">
@@ -413,7 +387,7 @@ const TEMPLATES = {
 };
 
 const EMOJI_SETS = {
-  birthday: ['🎂','🎉','��','🥳','🎁','🎊','🍰','🎵','🌟','❤️','🥂','💐'],
+  birthday: ['🎂','🎉','🎈','🥳','🎁','🎊','🍰','🎵','��','❤️','🥂','💐'],
   anniversary: ['💕','🌹','🥂','❤️','💍','💐','🕯️','✨','🥰','💫','🍷','🫶'],
   congrats: ['🎊','👏','🌟','🎯','🏆','💪','🎉','✨','🥳','🔥','💐','👏'],
   thankyou: ['🙏','💖','🌸','😊','🤗','💝','🌟','❤️','💐','🫶','✨','🌺'],
@@ -426,7 +400,6 @@ const DAYS_SHORT = ['Mo','Tu','We','Th','Fr','Sa','Su'];
 let currentPage = 'upcoming';
 let currentFilter = 'all';
 let calYear, calMonth, calSelectedDate = null;
-let currentMsgEvent = null;
 let settings = { notifEnabled: false, soundEnabled: true };
 
 /* ==================== Data Layer ==================== */
@@ -508,11 +481,6 @@ function updateFormCharCount() {
   const el = document.getElementById('form-char-counter');
   el.textContent = `${len} / ${SMS_LIMIT}`;
   el.className = `char-counter ${getCharClass(len)}`;
-}
-function renderMsgCharCount(msg) {
-  const len = msg.length;
-  const cls = len <= SMS_LIMIT ? 'char-ok' : 'char-over';
-  return `<div class="char-counter ${cls}">${len} / ${SMS_LIMIT} chars${len > SMS_LIMIT ? ' (will truncate for SMS)' : ''}</div>`;
 }
 
 /* ==================== Reminder System ==================== */
@@ -645,6 +613,23 @@ function renderEventCard(ev, idx) {
   const nextOcc = getNextOccurrence(ev.date);
   const sentThisYear = ev.lastSentYear === nextOcc.getFullYear();
   const hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g, '').length >= 8;
+
+  // Build the action buttons row
+  let actionBtns = '';
+  if (hasPhone) {
+    actionBtns = `
+      <button class="btn btn-whatsapp btn-xs" onclick="directWhatsApp('${ev.id}',event)">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+      </button>
+      <button class="btn btn-sms btn-xs" onclick="directSMS('${ev.id}',event)">
+        <i class="fa-solid fa-comment-sms"></i> SMS
+      </button>`;
+  } else {
+    actionBtns = `<button class="btn btn-secondary btn-xs" onclick="openAddModal('${ev.id}')">
+      <i class="fa-solid fa-phone"></i> Add Phone
+    </button>`;
+  }
+
   return `<div class="event-card mb-3" style="animation:slideUp 0.3s ease ${idx*50}ms both;">
     <div class="flex items-start justify-between gap-3">
       <div class="flex items-start gap-3 flex-1 min-w-0">
@@ -665,8 +650,8 @@ function renderEventCard(ev, idx) {
         <div class="countdown-label">${cd.text === 'TODAY' ? 'Today' : cd.text === 'Tomorrow' ? 'day' : cd.text.includes('m') ? '' : 'days'}</div>
       </div>
     </div>
-    <div class="flex gap-2 mt-3">
-      ${hasPhone ? `<button class="btn btn-whatsapp btn-sm" onclick="openMsgModal('${ev.id}',event)"><i class="fa-brands fa-whatsapp"></i> Send</button>` : `<button class="btn btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Add phone number"><i class="fa-solid fa-phone"></i> Add Phone</button>`}
+    <div class="flex items-center gap-2 mt-3 flex-wrap">
+      ${actionBtns}
       <div class="flex-1"></div>
       <button class="btn-icon btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
       <button class="btn-icon btn-danger btn-sm" onclick="confirmDelete('${ev.id}')" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>
@@ -716,12 +701,18 @@ function renderCalEvents() {
     evts.map(ev => {
       const cat = CATEGORIES[ev.category] || CATEGORIES.custom;
       const hasPhone = ev.phone && ev.phone.replace(/[\s\-\(\)]/g,'').length >= 8;
+      let btns = '';
+      if (hasPhone) {
+        btns = `
+          <button class="btn-icon btn-whatsapp btn-sm" onclick="directWhatsApp('${ev.id}',event)" title="WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></button>
+          <button class="btn-icon btn-sms btn-sm" onclick="directSMS('${ev.id}',event)" title="SMS"><i class="fa-solid fa-comment-sms text-sm"></i></button>`;
+      }
       return `<div class="event-card mb-2">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg flex items-center justify-center cat-${ev.category}"><i class="fa-solid ${cat.icon} text-xs"></i></div>
           <div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate">${escHtml(ev.name)}</p>${ev.contactName?`<p class="text-xs" style="color:var(--muted);">${escHtml(ev.contactName)}</p>`:''}</div>
           <div class="flex gap-1.5">
-            ${hasPhone?`<button class="btn-icon btn-whatsapp btn-sm" onclick="openMsgModal('${ev.id}',event)" title="Send"><i class="fa-brands fa-whatsapp text-sm"></i></button>`:''}
+            ${btns}
             <button class="btn-icon btn-secondary btn-sm" onclick="openAddModal('${ev.id}')" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
           </div>
         </div>
@@ -870,107 +861,46 @@ function handleFormSubmit(e) {
   closeModal('modal-add');
 }
 
-/* ==================== WhatsApp & SMS Send ==================== */
+/* ==================== Direct Send: WhatsApp & SMS ==================== */
 function getResolvedMessage(ev) {
   const name = ev.contactName || ev.name;
   return (ev.message || '').replace(/\{name\}/g, name);
 }
 
-function openMsgModal(evId, evt) {
+function markAsSent(evId) {
   const ev = getEvents().find(e => e.id === evId);
   if (!ev) return;
-  currentMsgEvent = ev;
+  const nextYear = getNextOccurrence(ev.date).getFullYear();
+  ev.lastSentYear = nextYear;
+  saveEvent(ev, true);
+}
+
+function directWhatsApp(evId, evt) {
+  const ev = getEvents().find(e => e.id === evId);
+  if (!ev || !ev.phone) { showToast('No phone number set', 'error'); return; }
   const msg = getResolvedMessage(ev);
-  const cat = CATEGORIES[ev.category] || CATEGORIES.custom;
-  const area = document.getElementById('msg-preview-area');
-  area.innerHTML = `
-    <div class="flex items-center gap-3 mb-4">
-      <div class="w-10 h-10 rounded-xl flex items-center justify-center cat-${ev.category}">
-        <i class="fa-solid ${cat.icon} text-sm"></i>
-      </div>
-      <div>
-        <p class="font-bold text-sm">${escHtml(ev.name)}</p>
-        <p class="text-xs" style="color:var(--muted);">To: ${escHtml(ev.contactName || 'N/A')} &middot; ${escHtml(ev.phone || 'No phone')}</p>
-      </div>
-    </div>
-    <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;">
-      <p class="text-sm leading-relaxed whitespace-pre-wrap">${escHtml(msg) || '<span style="color:var(--muted);">No message set. Edit the event to add one.</span>'}</p>
-    </div>
-    ${msg ? renderMsgCharCount(msg) : ''}
-    <div class="emoji-bar mt-3">
-      ${['❤️','🎉','🎂','🌟','🎈','🥳','🌹','💫','✨','🥂','💕','🎁'].map(e => `<button type="button" class="emoji-btn" onclick="appendMsgEmoji('${e}')">${e}</button>`).join('')}
-    </div>`;
-  // Show SMS warning if message is long
-  const smsWarn = document.getElementById('sms-warning');
-  if (msg && msg.length > SMS_LIMIT) { smsWarn.classList.remove('hidden'); } else { smsWarn.classList.add('hidden'); }
-  openModal('modal-message');
-}
-
-function appendMsgEmoji(emoji) {
-  if (!currentMsgEvent) return;
-  currentMsgEvent.message = (currentMsgEvent.message || '') + emoji;
-  saveEvent(currentMsgEvent, true);
-  const preview = document.querySelector('#msg-preview-area .whitespace-pre-wrap');
-  if (preview) preview.textContent = getResolvedMessage(currentMsgEvent);
-  const counter = document.querySelector('#msg-preview-area .char-counter');
-  if (counter) {
-    const msg = getResolvedMessage(currentMsgEvent);
-    counter.outerHTML = renderMsgCharCount(msg);
-  }
-  const smsWarn = document.getElementById('sms-warning');
-  if (msg && msg.length > SMS_LIMIT) { smsWarn.classList.remove('hidden'); } else { smsWarn.classList.add('hidden'); }
-}
-
-function markAsSent() {
-  if (!currentMsgEvent) return;
-  const nextYear = getNextOccurrence(currentMsgEvent.date).getFullYear();
-  currentMsgEvent.lastSentYear = nextYear;
-  saveEvent(currentMsgEvent, true);
-}
-
-function openWhatsApp() {
-  if (!currentMsgEvent || !currentMsgEvent.phone) {
-    showToast('No phone number set for this event', 'error'); return;
-  }
-  const msg = getResolvedMessage(currentMsgEvent);
-  const phone = currentMsgEvent.phone.replace(/[^0-9+]/g, '');
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-  markAsSent();
-  window.open(url, '_blank');
-  const btn = document.querySelector('.btn-whatsapp');
-  if (btn) { const r = btn.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
+  const phone = ev.phone.replace(/[^0-9+]/g, '');
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  markAsSent(evId);
+  if (evt) { const r = evt.currentTarget.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
   if (settings.soundEnabled) playChime();
-  closeModal('modal-message');
   setTimeout(() => { renderCurrentPage(); showToast('Opened WhatsApp — just tap Send!', 'success'); }, 300);
 }
 
-function openSMS() {
-  if (!currentMsgEvent || !currentMsgEvent.phone) {
-    showToast('No phone number set for this event', 'error'); return;
-  }
-  let msg = getResolvedMessage(currentMsgEvent);
-  // Truncate for SMS limit
+function directSMS(evId, evt) {
+  const ev = getEvents().find(e => e.id === evId);
+  if (!ev || !ev.phone) { showToast('No phone number set', 'error'); return; }
+  let msg = getResolvedMessage(ev);
   if (msg.length > SMS_LIMIT) {
     msg = msg.substring(0, SMS_LIMIT - 3) + '...';
     showToast(`Message truncated to ${SMS_LIMIT} characters for SMS`, 'info');
   }
-  const phone = currentMsgEvent.phone.replace(/[^0-9+]/g, '');
-  const url = `sms:${phone}?body=${encodeURIComponent(msg)}`;
-  markAsSent();
-  window.location.href = url;
-  const btn = document.querySelector('.btn-sms');
-  if (btn) { const r = btn.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
+  const phone = ev.phone.replace(/[^0-9+]/g, '');
+  window.location.href = `sms:${phone}?body=${encodeURIComponent(msg)}`;
+  markAsSent(evId);
+  if (evt) { const r = evt.currentTarget.getBoundingClientRect(); burstConfetti(r.left + r.width / 2, r.top); }
   if (settings.soundEnabled) playChime();
-  closeModal('modal-message');
   setTimeout(() => { renderCurrentPage(); showToast('Opened Messages — just tap Send!', 'success'); }, 500);
-}
-
-function copyMessage() {
-  if (!currentMsgEvent) return;
-  const msg = getResolvedMessage(currentMsgEvent);
-  navigator.clipboard.writeText(msg).then(() => {
-    showToast('Message copied to clipboard', 'success');
-  }).catch(() => { showToast('Failed to copy', 'error'); });
 }
 
 /* ==================== Confirm Actions ==================== */
